@@ -6,7 +6,11 @@ import { UserRole } from './core/models/user.model';
 
 export const routes: Routes = [
 
-
+    // Auth routes
+    {
+        path: 'auth',
+        loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
+    },
     {
         path: '',
         component: MainLayoutComponent,
@@ -41,16 +45,6 @@ export const routes: Routes = [
                 data: { roles: [UserRole.ADMIN, UserRole.MODERATOR] }
             },
         ]
-    },
-
-    // Auth routes
-    {
-        path: 'login',
-        loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
-    },
-    {
-        path: 'register',
-        loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
     },
     // Root route - redirect to login
     {
