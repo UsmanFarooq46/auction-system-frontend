@@ -13,17 +13,18 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.loadUserFromStorage();
+    // this.loadUserFromStorage();
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         tap(response => {
-          this.setUser(response.user);
+          console.log("response in auth service: ",response);
+          this.setUser(response.data.user);
           if (typeof window !== 'undefined') {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('refreshToken', response.refreshToken);
+            localStorage.setItem('token', response.data.token);
+            // localStorage.setItem('refreshToken', response.data.);
           }
         })
       );
@@ -33,11 +34,11 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, userData)
       .pipe(
         tap(response => {
-          this.setUser(response.user);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('refreshToken', response.refreshToken);
-          }
+          // this.setUser(response.user);
+          // if (typeof window !== 'undefined') {
+          //   localStorage.setItem('token', response.token);
+          //   localStorage.setItem('refreshToken', response.refreshToken);
+          // }
         })
       );
   }

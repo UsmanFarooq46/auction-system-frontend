@@ -40,7 +40,13 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  user: User;
+  data: any;
+  message: string;
+  success: boolean;
+}
+
+
+interface dataFromLogin{
   token: string;
-  refreshToken: string;
+  user: any;
 }

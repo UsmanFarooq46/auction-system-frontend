@@ -2,7 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { Store } from '@ngrx/store';
+import { AuthActions } from '../../../state/auth/auth.actions';
+import { selectAuthError, selectAuthLoading } from '../../../state/auth/auth.selectors';
 
 @Component({
   selector: 'app-login',
@@ -12,9 +14,9 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  private authService = inject(AuthService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private store = inject(Store);
 
   // Signals for reactive state management
   isLoading = signal(false);
@@ -33,6 +35,9 @@ export class LoginComponent {
     this.loginForm.valueChanges.subscribe(() => {
       this.errorMessage.set(null);
     });
+
+    this.store.select(selectAuthLoading).subscribe((loading) => this.isLoading.set(loading));
+    this.store.select(selectAuthError).subscribe((err) => this.errorMessage.set(err));
   }
 
   /**
@@ -57,71 +62,16 @@ export class LoginComponent {
    * Perform the actual login
    */
   private async performLogin(): Promise<void> {
-    this.isLoading.set(true);
     this.errorMessage.set(null);
-
-    try {
-      const { email, password, rememberMe } = this.loginForm.value;
-      
-      // Simulate API call with delay
-      const user = await this.simulateLogin(email, password);
-      
-      // Store remember me preference
-      if (rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
-      }
-
-      // Login the user
-      this.authService.login(user);
-
-      // Navigate to home page on success
-      this.router.navigate(['/']);
-      
-    } catch (error) {
-      this.handleLoginError(error);
-    } finally {
-      this.isLoading.set(false);
-    }
+    const { email, password, rememberMe } = this.loginForm.value;
+    if (!email || !password) return;
+    this.store.dispatch(AuthActions.login({ credentials: { email, password }, rememberMe: !!rememberMe }));
   }
 
   /**
    * Simulate login API call
    */
-  private simulateLogin(email: string, password: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Simulate different scenarios
-        if (email === 'demo@auctionhub.com' && password === 'password123') {
-          // Successful login
-          resolve({
-            id: '1',
-            email: email,
-            firstName: 'Demo',
-            lastName: 'User',
-            role: 'USER' as any,
-            isEmailVerified: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          });
-        } else if (email === 'admin@auctionhub.com' && password === 'admin123') {
-          // Admin login
-          resolve({
-            id: '2',
-            email: email,
-            firstName: 'Admin',
-            lastName: 'User',
-            role: 'ADMIN' as any,
-            isEmailVerified: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          });
-        } else {
-          // Invalid credentials
-          reject(new Error('Invalid email or password. Try demo@auctionhub.com / password123'));
-        }
-      }, 1500); // Simulate network delay
-    });
-  }
+  private simulateLogin(email: string, password: string,rememberMe?:boolean) {}
 
   /**
    * Handle login errors
