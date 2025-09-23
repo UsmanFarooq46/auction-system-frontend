@@ -1,0 +1,168 @@
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary-600 to-secondary-500 text-white py-20">
+  <div class="container mx-auto px-4 text-center">
+    <h1 class="text-5xl font-bold mb-6 animate-fade-in">
+      Welcome to AuctionHub
+    </h1>
+    <p class="text-xl mb-8 max-w-2xl mx-auto animate-slide-up">
+      Discover unique items, place competitive bids, and win amazing deals from trusted sellers worldwide.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
+      <a routerLink="/auctions" class="btn btn-lg bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-all duration-200">
+        Browse Auctions
+      </a>
+      <a routerLink="/register" class="btn btn-lg border-2 border-white text-white hover:bg-white hover:text-primary-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200">
+        Start Selling
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      @for (stat of stats; track stat.label) {
+        <div class="text-center animate-fade-in">
+          <div class="text-4xl mb-2">{{ stat.icon }}</div>
+          <div class="text-3xl font-bold text-primary-600 mb-1">{{ stat.value }}</div>
+          <div class="text-gray-600">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Featured Auctions Section -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">Featured Auctions</h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Discover our most popular and exciting auction items
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (auction of featuredAuctions; track auction.id) {
+        <div class="auction-card group">
+          <div class="relative overflow-hidden">
+            <img [src]="auction.image" [alt]="auction.title" class="auction-card-image">
+            <div class="absolute top-4 right-4">
+              @if (auction.status === 'live') {
+                <span class="badge badge-live">Live</span>
+              } @else if (auction.status === 'ending-soon') {
+                <span class="badge badge-ending-soon">Ending Soon</span>
+              }
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="auction-card-title">{{ auction.title }}</h3>
+            <p class="auction-card-description">{{ auction.description }}</p>
+            
+            <div class="mt-4 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Current Bid</span>
+                <span class="text-price">${{ auction.currentBid | number }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Time Left</span>
+                <span class="text-timer">{{ auction.timeLeft }}</span>
+              </div>
+            </div>
+            
+            <button class="w-full mt-4 btn btn-primary">
+              Place Bid
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+    
+    <div class="text-center mt-12">
+      <a routerLink="/auctions" class="btn btn-outline btn-lg">
+        View All Auctions
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">Browse by Category</h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Find exactly what you're looking for
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      @for (category of categories; track category.name) {
+        <a routerLink="/auctions" [queryParams]="{category: category.name}" 
+           class="card-interactive text-center p-6 hover:shadow-lg transition-all duration-200">
+          <div class="text-4xl mb-3">{{ category.icon }}</div>
+          <h3 class="font-semibold text-gray-900 mb-1">{{ category.name }}</h3>
+          <p class="text-sm text-gray-500">{{ category.count }} items</p>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Simple steps to start bidding and selling
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-2xl">🔍</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">1. Browse & Search</h3>
+        <p class="text-gray-600">Discover amazing items from trusted sellers around the world</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-2xl">🔨</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">2. Place Your Bid</h3>
+        <p class="text-gray-600">Bid on items you love and compete with other bidders</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-2xl">🏆</span>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">3. Win & Enjoy</h3>
+        <p class="text-gray-600">Win the auction and receive your item safely</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-primary-600 text-white">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-4xl font-bold mb-4">Ready to Start Bidding?</h2>
+    <p class="text-xl mb-8 max-w-2xl mx-auto">
+      Join thousands of satisfied customers and start your auction journey today
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a routerLink="/register" class="btn btn-lg bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-all duration-200">
+        Sign Up Free
+      </a>
+      <a routerLink="/auctions" class="btn btn-lg border-2 border-white text-white hover:bg-white hover:text-primary-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200">
+        Browse Now
+      </a>
+    </div>
+  </div>
+</section>

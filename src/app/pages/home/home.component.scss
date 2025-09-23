@@ -1,0 +1,56 @@
+/* Home Page Styles */
+/* Using Tailwind CSS classes - minimal custom styles needed */
+
+/* Custom animations for hero section */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slide-up {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.animate-scale-in {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+/* Hover effects for auction cards */
+.auction-card {
+  transition: all 0.3s ease;
+}
+
+.auction-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Category cards hover effect */
+.card-interactive:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auction-card-image {
+    height: 10rem;
+  }
+  
+  .text-5xl {
+    font-size: 2.5rem;
+  }
+  
+  .text-4xl {
+    font-size: 2rem;
+  }
+}

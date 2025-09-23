@@ -1,0 +1,13 @@
+<div class="auctions-list">
+  <div class="header">
+    <h1>Live Auctions</h1>
+    <a routerLink="/auctions/create" class="create-btn">Create Auction</a>
+  </div>
+  <div class="auctions-grid">
+    <div class="auction-card" *ngFor="let auction of mockAuctions">
+      <h3>{{ auction.title }}</h3>
+      <p>{{ auction.description }}</p>
+      <span>${{ auction.currentPrice }}</span>
+    </div>
+  </div>
+</div>
