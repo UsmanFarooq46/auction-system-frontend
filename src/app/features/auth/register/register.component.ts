@@ -55,7 +55,6 @@ export class RegisterComponent {
         firstName: this.registerForm.value.firstName,
         lastName: this.registerForm.value.lastName,
         email: this.registerForm.value.email?.toLowerCase(),
-        username: this.registerForm.value.email?.toLowerCase(), // Use email as username
         password: this.registerForm.value.password,
         phone: this.registerForm.value.phone,
         dateOfBirth: this.registerForm.value.dateOfBirth,
@@ -67,9 +66,7 @@ export class RegisterComponent {
       this.authService.register(registrationData).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-          console.log('Registration successful:', response);
-          
-          // Show success message and redirect to login
+          console.log('Registration successful:', response);          
           this.showSuccessMessage();
           this.router.navigate(['/login']);
         },

@@ -158,21 +158,21 @@
             <label class="block text-sm font-medium text-gray-700">Account Type</label>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
-                     [class.border-indigo-500]="registerForm.get('role')?.value === 'customer'"
-                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'customer'">
-                <input type="radio" formControlName="role" value="customer" class="sr-only" />
+                     [class.border-indigo-500]="registerForm.get('role')?.value === 'bidder'"
+                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'bidder'">
+                <input type="radio" formControlName="role" value="bidder" class="sr-only" />
                 <div class="flex items-center">
                   <div class="text-3xl mr-4">🛒</div>
                   <div>
-                    <div class="text-lg font-semibold text-gray-900">Customer</div>
+                    <div class="text-lg font-semibold text-gray-900">Bidder</div>
                     <div class="text-sm text-gray-500">Browse and bid on auctions</div>
                   </div>
                 </div>
               </label>
               <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
-                     [class.border-indigo-500]="registerForm.get('role')?.value === 'merchant'"
-                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'merchant'">
-                <input type="radio" formControlName="role" value="merchant" class="sr-only" />
+                     [class.border-indigo-500]="registerForm.get('role')?.value === 'seller'"
+                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'seller'">
+                <input type="radio" formControlName="role" value="seller" class="sr-only" />
                 <div class="flex items-center">
                   <div class="text-3xl mr-4">🏪</div>
                   <div>
