@@ -1,0 +1,150 @@
+/* Register Component Styles */
+
+/* Form Input Error States */
+.error {
+  @apply border-red-500 ring-red-500;
+}
+
+.error:focus {
+  @apply ring-red-500 border-red-500;
+}
+
+/* Custom Radio Button Styles */
+input[type="radio"]:checked + div {
+  @apply bg-blue-50 border-blue-500;
+}
+
+/* Role Selection Cards */
+.role-card {
+  @apply transition-all duration-200;
+}
+
+.role-card:hover {
+  @apply transform scale-105 shadow-md;
+}
+
+.role-card input[type="radio"]:checked + div {
+  @apply bg-blue-50 border-blue-500;
+}
+
+/* Password Toggle Button */
+.password-toggle {
+  @apply transition-colors duration-200;
+}
+
+.password-toggle:hover {
+  @apply text-gray-600;
+}
+
+/* Form Section Headers */
+.section-header {
+  @apply relative;
+}
+
+.section-header::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-blue-200 to-purple-200;
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Form Validation Messages */
+.validation-error {
+  @apply text-red-500 text-sm mt-1 animate-fade-in;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Button Hover Effects */
+.btn-register {
+  @apply transition-all duration-200 transform;
+}
+
+.btn-register:hover:not(:disabled) {
+  @apply scale-105 shadow-lg;
+}
+
+.btn-register:active:not(:disabled) {
+  @apply scale-95;
+}
+
+/* Form Field Focus Effects */
+.form-field {
+  @apply transition-all duration-200;
+}
+
+.form-field:focus {
+  @apply transform scale-105;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .register-container {
+    @apply px-4 py-6;
+  }
+  
+  .role-selection {
+    @apply flex-col space-y-2;
+  }
+  
+  .gender-selection {
+    @apply flex-col space-y-2;
+  }
+}
+
+/* Custom Scrollbar for Form */
+.form-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Success State */
+.success {
+  @apply border-green-500 bg-green-50;
+}
+
+/* Warning State */
+.warning {
+  @apply border-yellow-500 bg-yellow-50;
+}
+
+/* Info State */
+.info {
+  @apply border-blue-500 bg-blue-50;
+}

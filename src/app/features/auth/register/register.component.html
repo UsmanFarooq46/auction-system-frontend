@@ -1,0 +1,244 @@
+<!-- Register Page Container -->
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl w-full">
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-6">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300">
+          <span class="text-white text-3xl font-bold">🏆</span>
+        </div>
+      </div>
+      <h2 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+        Join AuctionHub
+      </h2>
+      <p class="text-gray-600 text-lg">Create your account and start your auction journey</p>
+    </div>
+
+    <!-- Registration Form Card -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        
+        <!-- Personal Information Section -->
+        <div class="space-y-5">
+          <div class="flex items-center mb-4">
+            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+              <span class="text-indigo-600 text-sm font-semibold">1</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800">Personal Information</h3>
+          </div>
+          
+          <!-- Name Fields Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- First Name -->
+            <app-text-field
+              label="First Name"
+              placeholder="John"
+              formControlName="firstName"
+              [invalid]="(registerForm.get('firstName')?.invalid ?? false) && (registerForm.get('firstName')?.touched ?? false)"
+              [error]="'First name is required'"
+            />
+
+            <!-- Last Name -->
+            <app-text-field
+              label="Last Name"
+              placeholder="Doe"
+              formControlName="lastName"
+              [invalid]="(registerForm.get('lastName')?.invalid ?? false) && (registerForm.get('lastName')?.touched ?? false)"
+              [error]="'Last name is required'"
+            />
+          </div>
+
+          <!-- Email -->
+          <app-text-field
+            label="Email Address"
+            type="email"
+            placeholder="john.doe@example.com"
+            formControlName="email"
+            [invalid]="(registerForm.get('email')?.invalid ?? false) && (registerForm.get('email')?.touched ?? false)"
+            [error]="registerForm.get('email')?.errors?.['required'] ? 'Email is required' : (registerForm.get('email')?.errors?.['email'] ? 'Please enter a valid email' : '')"
+          />
+
+          <!-- Password -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="relative">
+              <app-text-field
+                [type]="showPassword() ? 'text' : 'password'"
+                placeholder="Create a strong password"
+                formControlName="password"
+                [invalid]="(registerForm.get('password')?.invalid ?? false) && (registerForm.get('password')?.touched ?? false)"
+                [error]="registerForm.get('password')?.errors?.['required'] ? 'Password is required' : (registerForm.get('password')?.errors?.['minlength'] ? 'Password must be at least 8 characters' : '')"
+              />
+              <button
+                type="button"
+                (click)="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              >
+                <span class="text-lg">{{ showPassword() ? '👁️' : '👁️‍🗨️' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="space-y-5">
+          <div class="flex items-center mb-4">
+            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+              <span class="text-purple-600 text-sm font-semibold">2</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800">Contact Information</h3>
+          </div>
+          
+          <!-- Phone -->
+          <app-text-field
+            label="Phone Number"
+            type="tel"
+            placeholder="+1 (555) 123-4567"
+            formControlName="phone"
+            [invalid]="(registerForm.get('phone')?.invalid ?? false) && (registerForm.get('phone')?.touched ?? false)"
+            [error]="'Phone number is required'"
+          />
+        </div>
+
+        <!-- Additional Information Section -->
+        <div class="space-y-5">
+          <div class="flex items-center mb-4">
+            <div class="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center mr-3">
+              <span class="text-cyan-600 text-sm font-semibold">3</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800">Additional Information</h3>
+          </div>
+          
+          <!-- Date of Birth -->
+          <app-text-field
+            label="Date of Birth"
+            type="date"
+            formControlName="dateOfBirth"
+            [invalid]="(registerForm.get('dateOfBirth')?.invalid ?? false) && (registerForm.get('dateOfBirth')?.touched ?? false)"
+            [error]="'Date of birth is required'"
+          />
+
+          <!-- Gender -->
+          <div class="space-y-3">
+            <label class="block text-sm font-medium text-gray-700">Gender</label>
+            <div class="grid grid-cols-3 gap-3">
+              <!-- Keep existing cards but bound to formControlName 'gender' -->
+              <label class="flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-colors duration-200" 
+                     [class.border-indigo-500]="registerForm.get('gender')?.value === 'male'"
+                     [class.bg-indigo-50]="registerForm.get('gender')?.value === 'male'">
+                <input type="radio" formControlName="gender" value="male" class="sr-only" />
+                <div class="text-center">
+                  <div class="text-2xl mb-1">👨</div>
+                  <div class="text-sm font-medium text-gray-700">Male</div>
+                </div>
+              </label>
+              <label class="flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-colors duration-200"
+                     [class.border-indigo-500]="registerForm.get('gender')?.value === 'female'"
+                     [class.bg-indigo-50]="registerForm.get('gender')?.value === 'female'">
+                <input type="radio" formControlName="gender" value="female" class="sr-only" />
+                <div class="text-center">
+                  <div class="text-2xl mb-1">👩</div>
+                  <div class="text-sm font-medium text-gray-700">Female</div>
+                </div>
+              </label>
+              <label class="flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-colors duration-200"
+                     [class.border-indigo-500]="registerForm.get('gender')?.value === 'other'"
+                     [class.bg-indigo-50]="registerForm.get('gender')?.value === 'other'">
+                <input type="radio" formControlName="gender" value="other" class="sr-only" />
+                <div class="text-center">
+                  <div class="text-2xl mb-1">🧑</div>
+                  <div class="text-sm font-medium text-gray-700">Other</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Role Selection -->
+          <div class="space-y-3">
+            <label class="block text-sm font-medium text-gray-700">Account Type</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
+                     [class.border-indigo-500]="registerForm.get('role')?.value === 'customer'"
+                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'customer'">
+                <input type="radio" formControlName="role" value="customer" class="sr-only" />
+                <div class="flex items-center">
+                  <div class="text-3xl mr-4">🛒</div>
+                  <div>
+                    <div class="text-lg font-semibold text-gray-900">Customer</div>
+                    <div class="text-sm text-gray-500">Browse and bid on auctions</div>
+                  </div>
+                </div>
+              </label>
+              <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
+                     [class.border-indigo-500]="registerForm.get('role')?.value === 'merchant'"
+                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'merchant'">
+                <input type="radio" formControlName="role" value="merchant" class="sr-only" />
+                <div class="flex items-center">
+                  <div class="text-3xl mr-4">🏪</div>
+                  <div>
+                    <div class="text-lg font-semibold text-gray-900">Merchant</div>
+                    <div class="text-sm text-gray-500">Create and manage auctions</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="space-y-3">
+          <div class="flex items-start">
+            <input id="terms" type="checkbox" formControlName="termsAccepted" class="mt-1 h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
+            <label for="terms" class="ml-3 text-sm text-gray-700">
+              I agree to the 
+              <a href="#" class="text-indigo-600 hover:text-indigo-500 font-medium">Terms of Service</a> 
+              and 
+              <a href="#" class="text-indigo-600 hover:text-indigo-500 font-medium">Privacy Policy</a>
+            </label>
+          </div>
+          @if (registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched) {
+            <p class="text-red-500 text-sm flex items-center">
+              <span class="mr-1">⚠️</span>
+              You must accept the terms and conditions
+            </p>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button
+            type="submit"
+            [disabled]="registerForm.invalid || isLoading()"
+            class="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
+          >
+            @if (!isLoading()) {
+              <span class="flex items-center">
+                <span class="mr-2">🚀</span>
+                Create Account
+              </span>
+            }
+            @if (isLoading()) {
+              <span class="flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating Account...
+              </span>
+            }
+          </button>
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center pt-4">
+          <p class="text-gray-600">
+            Already have an account? 
+            <a routerLink="/login" class="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
+              Sign in here
+            </a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
