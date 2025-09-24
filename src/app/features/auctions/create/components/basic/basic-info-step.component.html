@@ -1,0 +1,61 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+  <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+    <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    Basic Information
+  </h2>
+
+  <form [formGroup]="basicForm"> 
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Title -->
+      <div class="md:col-span-2">
+        <app-text-field
+          label="Auction Title *"
+          placeholder="Enter a descriptive title for your auction"
+          [invalid]="(basicForm.get('title')?.invalid ?? false) && (basicForm.get('title')?.touched ?? false)"
+          [error]="getFieldError('title')"
+          formControlName="title">
+        </app-text-field>
+      </div>
+  
+      <!-- Category -->
+      <div>
+        <app-select-box
+          label="Category *"
+          placeholder="Select a category"
+          [options]="defaultCategories"
+          [invalid]="(basicForm.get('category')?.invalid ?? false) && (basicForm.get('category')?.touched ?? false)"
+          [error]="getFieldError('category')"
+          formControlName="category">
+        </app-select-box>
+      </div>
+  
+      <!-- Condition -->
+      <div>
+        <app-select-box
+          label="Condition *"
+          placeholder="Select condition"
+          [options]="conditions"
+          [invalid]="(basicForm.get('condition')?.invalid ?? false) && (basicForm.get('condition')?.touched ?? false)"
+          [error]="getFieldError('condition')"
+          formControlName="condition">
+        </app-select-box>
+      </div>
+  
+      <!-- Description -->
+      <div class="md:col-span-2">
+        <app-text-field
+          label="Description *"
+          placeholder="Provide detailed information about your item..."
+          [invalid]="(basicForm.get('description')?.invalid ?? false) && (basicForm.get('description')?.touched ?? false)"
+          [error]="getFieldError('description')"
+          formControlName="description">
+        </app-text-field>
+        <p class="text-gray-500 text-sm mt-1">{{ basicForm.get('description')?.value?.length || 0 }}/1000 characters</p>
+      </div>
+    </div>
+  </form>
+</div>
+
+
