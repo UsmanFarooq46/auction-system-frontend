@@ -1,0 +1,560 @@
+/* Profile Page Styles */
+.profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding-top: 5rem; /* Add space for fixed header */
+}
+
+/* Profile Header */
+.profile-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-top: -5rem; /* Offset the padding-top */
+  padding-top: 7rem; /* Add extra padding to account for header */
+}
+
+.profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.profile-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Avatar Animation */
+.profile-header .relative:hover .w-24 {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Button Styles */
+.btn {
+  @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+  @apply text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.btn-outline {
+  @apply text-gray-700 bg-white border-gray-300 hover:bg-gray-50 focus:ring-blue-500;
+}
+
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-settings-premium {
+  @apply inline-flex items-center px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 2px solid #cbd5e1;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-settings-premium:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #d1d5db 100%);
+  border-color: #94a3b8;
+  color: #334155;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-settings-premium:active {
+  transform: translateY(0);
+}
+
+.btn-settings-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.15), transparent);
+  transition: left 0.6s;
+}
+
+.btn-settings-premium:hover::before {
+  left: 100%;
+}
+
+.btn-settings-premium svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-settings-premium:hover svg {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Card Styles */
+.bg-white {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  position: relative;
+}
+
+.tab-navigation::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+}
+
+/* Tab Button Alignment */
+nav button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  position: relative;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: -1px;
+}
+
+nav button span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Tab Active Indicator */
+.tab-active-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tab Hover Effects */
+nav button:hover {
+  transform: translateY(-1px);
+}
+
+nav button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Tab Design */
+@media (max-width: 640px) {
+  nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  nav button {
+    flex: 1;
+    min-width: 0;
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+/* Enhanced Tab Styling */
+nav button {
+  position: relative;
+  overflow: hidden;
+}
+
+nav button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+nav button:hover::before {
+  left: 100%;
+}
+
+/* Active Tab Styling */
+nav button.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border-bottom: 2px solid #3b82f6;
+}
+
+/* Tab Icon Animation */
+nav button svg {
+  transition: transform 0.2s ease;
+}
+
+nav button:hover svg {
+  transform: scale(1.1);
+}
+
+nav button.active svg {
+  color: #3b82f6;
+}
+
+/* Enhanced Edit/Save Button Styling */
+button[class*="bg-gradient-to-r"] {
+  position: relative;
+  overflow: hidden;
+}
+
+button[class*="bg-gradient-to-r"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.7s;
+}
+
+button[class*="bg-gradient-to-r"]:hover::before {
+  left: 100%;
+}
+
+/* Save Changes Button Specific Styling */
+button[class*="from-emerald-500"] {
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+button[class*="from-emerald-500"]:hover {
+  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.5);
+}
+
+/* Edit Profile Button Specific Styling */
+button[class*="from-blue-500"] {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+button[class*="from-blue-500"]:hover {
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
+}
+
+/* Button Icon Animation */
+button[class*="bg-gradient-to-r"] svg {
+  transition: transform 0.3s ease;
+}
+
+button[class*="bg-gradient-to-r"]:hover svg {
+  transform: scale(1.15) rotate(5deg);
+}
+
+button[class*="bg-gradient-to-r"]:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Button Text Animation */
+button[class*="bg-gradient-to-r"] span {
+  transition: all 0.2s ease;
+}
+
+button[class*="bg-gradient-to-r"]:hover span {
+  transform: translateX(2px);
+}
+
+/* Tab Active Indicator */
+.tab-active-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Form Styles */
+input, textarea, select {
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Bid Status Badges */
+.bid-status {
+  position: relative;
+  overflow: hidden;
+}
+
+.bid-status::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.bid-status:hover::before {
+  left: 100%;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .toggle-slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick Actions */
+.quick-action {
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.quick-action:hover::before {
+  left: 100%;
+}
+
+/* Stats Cards */
+.stats-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 1.5rem 0;
+  }
+  
+  .profile-header .flex {
+    flex-direction: column;
+    text-align: center;
+    space-x: 0;
+    gap: 1rem;
+  }
+  
+  .profile-header .flex-1 {
+    order: 2;
+  }
+  
+  .profile-header .flex.items-center.space-x-3 {
+    order: 3;
+    justify-content: center;
+  }
+  
+  .grid.grid-cols-1.lg\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .lg\\:col-span-1 {
+    order: 2;
+  }
+  
+  .lg\\:col-span-2 {
+    order: 1;
+  }
+}
+
+/* Loading States */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Focus States */
+.focus-ring:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  ring-offset: 2px;
+}
+
+/* Status Indicators */
+.status-indicator {
+  position: relative;
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.status-indicator.online::after {
+  background-color: #10b981;
+}
+
+.status-indicator.offline::after {
+  background-color: #6b7280;
+}
+
+.status-indicator.busy::after {
+  background-color: #ef4444;
+}

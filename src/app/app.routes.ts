@@ -5,7 +5,6 @@ import { RoleGuard } from './core/guards/role.guard';
 import { UserRole } from './core/models/user.model';
 
 export const routes: Routes = [
-
     // Auth routes
     {
         path: 'auth',
@@ -46,15 +45,9 @@ export const routes: Routes = [
             },
         ]
     },
-    // Root route - redirect to login
-    {
-        path: '',
-        redirectTo: '/login',
-        pathMatch: 'full'
-    },
-    // Wildcard route - redirect to login for any unknown routes
+    // Wildcard route - redirect to home for any unknown routes
     {
         path: '**',
-        redirectTo: '/login'
+        redirectTo: ''
     }
 ];
