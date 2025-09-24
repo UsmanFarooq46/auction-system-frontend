@@ -54,16 +54,6 @@ export class CreateAuctionComponent {
 
   auctionForm: FormGroup;
 
-  
-
-  conditions = [
-    { value: 'new', label: 'New' },
-    { value: 'like-new', label: 'Like New' },
-    { value: 'good', label: 'Good' },
-    { value: 'fair', label: 'Fair' },
-    { value: 'poor', label: 'Poor' }
-  ];
-
   durations = [
     { value: 1, label: '1 Day' },
     { value: 3, label: '3 Days' },
@@ -194,6 +184,9 @@ export class CreateAuctionComponent {
     }
     return '';
   }
+
+  // Bound function for child components to keep correct `this` context
+  getFieldErrorBound = (fieldName: string) => this.getFieldError(fieldName);
 
   goBack(): void {
     this.router.navigate(['/auctions']);

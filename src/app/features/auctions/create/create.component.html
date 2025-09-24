@@ -67,18 +67,16 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Form Steps -->
       <div class="lg:col-span-2">
+        @if (currentStep() === 1) {
+          <app-basic-info-step 
+            [form]="auctionForm"
+            [getFieldError]="getFieldErrorBound"
+            (validChange)="basicValid = $event">
+          </app-basic-info-step>
+        }
         <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()" class="space-y-8">
           
           <!-- Step 1: Basic Information -->
-          @if (currentStep() === 1) {
-            <app-basic-info-step 
-              [form]="auctionForm"
-              [conditions]="conditions"
-              [getFieldError]="getFieldError"
-              (dataChange)="auctionForm.patchValue($event)"
-              (validChange)="basicValid = $event">
-            </app-basic-info-step>
-          }
 
       <!-- @if (currentStep() === 2) {
         <app-pricing-step [form]="auctionForm" [getFieldError]="getFieldError"></app-pricing-step>

@@ -1,41 +1,36 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-
-export interface SelectOption {
-  value: string | number;
-  label: string;
-}
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'app-select-box',
+  selector: 'app-textarea-field',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './select-box.component.html',
-  styleUrls: ['./select-box.component.scss'],
+  templateUrl: './textarea-field.component.html',
+  styleUrls: ['./textarea-field.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SelectBoxComponent),
+      useExisting: forwardRef(() => TextareaFieldComponent),
       multi: true,
     },
   ],
 })
-export class SelectBoxComponent implements ControlValueAccessor {
+export class TextareaFieldComponent implements ControlValueAccessor {
   @Input() label = '';
-  @Input() placeholder = 'Select...';
-  @Input() options: SelectOption[] = [];
+  @Input() placeholder = '';
+  @Input() rows = 4;
   @Input() invalid = false;
   @Input() error = '';
 
-  value: string | number | null = null;
+  value: string | null = null;
   disabled = false;
 
   private onChange: (val: any) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: any): void {
-    this.value = value ?? null;
+    this.value = value ?? '';
   }
 
   registerOnChange(fn: any): void {
@@ -50,14 +45,15 @@ export class SelectBoxComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  handleChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
+  handleInput(event: Event): void {
+    const target = event.target as HTMLTextAreaElement;
     this.value = target.value;
     this.onChange(this.value);
-    this.onTouched();
   }
 
   handleBlur(): void {
     this.onTouched();
   }
 }
+
+
