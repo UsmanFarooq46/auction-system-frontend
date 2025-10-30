@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BasicInfoStepComponent } from './components/basic/basic-info-step.component';
-// import { PricingStepComponent } from './components/pricing/pricing-step.component';
-// import { TimingStepComponent } from './components/timing/timing-step.component';
-// import { LocationStepComponent } from './components/location/location-step.component';
-// import { ImagesStepComponent } from './components/images/images-step.component';
+import { PricingStepComponent } from './components/pricing/pricing-step.component';
+import { TimingStepComponent } from './components/timing/timing-step.component';
+import { LocationStepComponent } from './components/location/location-step.component';
+import { ImagesStepComponent } from './components/images/images-step.component';
 
 interface AuctionFormData {
   title: string;
@@ -29,10 +29,10 @@ interface AuctionFormData {
     CommonModule,
     ReactiveFormsModule,
     BasicInfoStepComponent,
-    // PricingStepComponent,
-    // TimingStepComponent,
-    // LocationStepComponent,
-    // ImagesStepComponent
+    PricingStepComponent,
+    TimingStepComponent,
+    LocationStepComponent,
+    ImagesStepComponent
   ],
   templateUrl: './create.component.html',
   styleUrl: './create.component.scss'
@@ -50,9 +50,7 @@ export class CreateAuctionComponent {
   showPreview = signal(false);
   estimatedValue = signal(0);
   formProgress = signal(0);
-  basicValid = false;
-
-  auctionForm: FormGroup;
+  basicValid = signal(false);
 
   durations = [
     { value: 1, label: '1 Day' },
@@ -70,123 +68,31 @@ export class CreateAuctionComponent {
     return titles[this.currentStep() - 1] || 'Complete';
   });
 
-  constructor() {
-    this.auctionForm = this.fb.group({
-      // basic step fields are now managed inside child; keep here for final aggregation if needed
-      title: [''],
-      description: [''],
-      category: [''],
-      startingPrice: ['', [Validators.required, Validators.min(1)]],
-      reservePrice: ['', [Validators.min(1)]],
-      duration: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      condition: ['', Validators.required],
-      location: ['', [Validators.required, Validators.minLength(5)]]
-    });
-
-    // Set default start date to now
-    const now = new Date();
-    const startDate = now.toISOString().slice(0, 16);
-    this.auctionForm.patchValue({ startDate });
-
-    // Auto-calculate end date when duration changes
-    this.auctionForm.get('duration')?.valueChanges.subscribe(duration => {
-      if (duration && this.auctionForm.get('startDate')?.value) {
-        this.calculateEndDate();
-      }
-    });
-
-    this.auctionForm.get('startDate')?.valueChanges.subscribe(() => {
-      if (this.auctionForm.get('duration')?.value) {
-        this.calculateEndDate();
-      }
-    });
-
-    // Watch form changes for progress calculation
-    this.auctionForm.valueChanges.subscribe(() => {
-      this.calculateFormProgress();
-    });
-
-    // Watch starting price for estimated value
-    this.auctionForm.get('startingPrice')?.valueChanges.subscribe(price => {
-      if (price) {
-        this.estimatedValue.set(price * 1.5); // Estimate 50% higher than starting price
-      }
-    });
+  //#region Validators steps
+  isBasicFormValid(isValid: boolean) {
+    this.basicValid.set(isValid);
   }
+  //#endregion
 
-  private calculateEndDate(): void {
-    const startDate = this.auctionForm.get('startDate')?.value;
-    const duration = this.auctionForm.get('duration')?.value;
-    
-    if (startDate && duration) {
-      const start = new Date(startDate);
-      const end = new Date(start.getTime() + (duration * 24 * 60 * 60 * 1000));
-      this.auctionForm.patchValue({ endDate: end.toISOString().slice(0, 16) });
-    }
-  }
+  pricingValid = signal(false);
+  timingValid = signal(false);
+  locationValid = signal(false);
+  imagesValid = signal(false);
 
 
   removeImage(index: number): void {
     const currentImages = this.selectedImages();
     const currentPreviews = this.previewImages();
-    
+
     // Revoke the URL to free memory
     URL.revokeObjectURL(currentPreviews[index]);
-    
+
     const newImages = currentImages.filter((_, i) => i !== index);
     const newPreviews = currentPreviews.filter((_, i) => i !== index);
-    
+
     this.selectedImages.set(newImages);
     this.previewImages.set(newPreviews);
   }
-
-  onSubmit(): void {
-    if (this.auctionForm.valid && this.selectedImages().length > 0) {
-      this.isSubmitting.set(true);
-      
-      const formData: AuctionFormData = {
-        ...this.auctionForm.value,
-        images: this.selectedImages()
-      };
-
-      console.log('Creating auction:', formData);
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.isSubmitting.set(false);
-        alert('Auction created successfully!');
-        this.router.navigate(['/auctions']);
-      }, 2000);
-    } else {
-      this.markFormGroupTouched();
-      if (this.selectedImages().length === 0) {
-        alert('Please select at least one image');
-      }
-    }
-  }
-
-  private markFormGroupTouched(): void {
-    Object.keys(this.auctionForm.controls).forEach(key => {
-      const control = this.auctionForm.get(key);
-      control?.markAsTouched();
-    });
-  }
-
-  getFieldError(fieldName: string): string {
-    const field = this.auctionForm.get(fieldName);
-    if (field?.errors && field.touched) {
-      if (field.errors['required']) return `${fieldName} is required`;
-      if (field.errors['minlength']) return `${fieldName} is too short`;
-      if (field.errors['maxlength']) return `${fieldName} is too long`;
-      if (field.errors['min']) return `${fieldName} must be greater than 0`;
-    }
-    return '';
-  }
-
-  // Bound function for child components to keep correct `this` context
-  getFieldErrorBound = (fieldName: string) => this.getFieldError(fieldName);
 
   goBack(): void {
     this.router.navigate(['/auctions']);
@@ -223,19 +129,6 @@ export class CreateAuctionComponent {
     const totalFields = 10; // Total number of form fields
     let completedFields = 0;
 
-    // Check each field
-    const fields = ['title', 'description', 'category', 'startingPrice', 'duration', 'startDate', 'condition', 'location'];
-    fields.forEach(field => {
-      if (this.auctionForm.get(field)?.valid) {
-        completedFields++;
-      }
-    });
-
-    // Add images (counts as 2 fields)
-    if (this.selectedImages().length > 0) {
-      completedFields += 2;
-    }
-
     const progress = (completedFields / totalFields) * 100;
     this.formProgress.set(Math.round(progress));
   }
@@ -244,47 +137,52 @@ export class CreateAuctionComponent {
   private isStepValid(step: number): boolean {
     switch (step) {
       case 1: // Basic Info
-        return !!(this.auctionForm.get('title')?.valid && 
-               this.auctionForm.get('description')?.valid && 
-               this.auctionForm.get('category')?.valid && 
-               this.auctionForm.get('condition')?.valid);
+        return this.basicValid();
       case 2: // Pricing
-        return !!this.auctionForm.get('startingPrice')?.valid;
+        return this.pricingValid();
       case 3: // Timing
-        return !!(this.auctionForm.get('duration')?.valid && 
-               this.auctionForm.get('startDate')?.valid);
+        return this.timingValid();
       case 4: // Location
-        return !!this.auctionForm.get('location')?.valid;
+        return this.locationValid();
       case 5: // Images
-        return this.selectedImages().length > 0;
+        return this.imagesValid();
       default:
         return false;
     }
   }
 
+  // Receive basic form data from child, save, then advance
+  onBasicProceed(data: { title: string; description: string; category: string; condition: string }): void {
+
+    this.nextStep();
+  }
+
+  // Receive pricing data from child, save, then advance
+  onPricingProceed(data: { startingPrice: number; reservePrice: number | null }): void {
+    // store or send pricing data as needed
+    this.nextStep();
+  }
+
+  onTimingProceed(data: { duration: number; startDate: string; endDate: string }): void {
+    // store or use timing data
+    this.nextStep();
+  }
+
+  onLocationProceed(data: { location: string }): void {
+    // store or use location data
+    this.nextStep();
+  }
+
   // Navigation gating: only allow moving beyond step 1 if basic info is valid
   canNavigateTo(step: number): boolean {
     if (step <= 1) return true;
-    return this.basicValid;
+    return this.basicValid();
   }
 
   // Aggregate validity across all steps
   isAllValid(): boolean {
-    const basic = this.basicValid;
-    const pricing = !!this.auctionForm.get('startingPrice')?.valid;
-    const timing = !!(this.auctionForm.get('duration')?.valid && this.auctionForm.get('startDate')?.valid);
-    const location = !!this.auctionForm.get('location')?.valid;
-    const imagesOk = this.selectedImages().length > 0;
-    return basic && pricing && timing && location && imagesOk;
-  }
-
-  private firstInvalidStep(): number {
-    if (!this.basicValid) return 1;
-    if (!this.auctionForm.get('startingPrice')?.valid) return 2;
-    if (!(this.auctionForm.get('duration')?.valid && this.auctionForm.get('startDate')?.valid)) return 3;
-    if (!this.auctionForm.get('location')?.valid) return 4;
-    if (this.selectedImages().length === 0) return 5;
-    return 0;
+    const basic = this.basicValid();
+    return basic;
   }
 
   // Drag and drop handlers
@@ -301,7 +199,7 @@ export class CreateAuctionComponent {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     this.isDragOver.set(false);
-    
+
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       this.handleFileSelection(files);
@@ -311,7 +209,7 @@ export class CreateAuctionComponent {
   private handleFileSelection(files: FileList | File[]): void {
     const fileArray = Array.from(files);
     const currentImages = this.selectedImages();
-    
+
     // Limit to 10 images total
     const totalImages = currentImages.length + fileArray.length;
     if (totalImages > 10) {
@@ -325,6 +223,7 @@ export class CreateAuctionComponent {
     // Create preview URLs
     const newPreviews = fileArray.map(file => URL.createObjectURL(file));
     this.previewImages.set([...this.previewImages(), ...newPreviews]);
+    this.imagesValid.set(this.selectedImages().length > 0);
   }
 
   // Enhanced image selection
@@ -333,15 +232,7 @@ export class CreateAuctionComponent {
     if (input.files && input.files.length > 0) {
       this.handleFileSelection(input.files);
     }
-  }
-
-  // Quick actions
-  setQuickDuration(days: number): void {
-    this.auctionForm.patchValue({ duration: days });
-  }
-
-  setQuickPrice(price: number): void {
-    this.auctionForm.patchValue({ startingPrice: price });
+    this.imagesValid.set(this.selectedImages().length > 0);
   }
 
   // Preview functionality
@@ -358,7 +249,7 @@ export class CreateAuctionComponent {
   // Step button styling
   getStepButtonClasses(step: number): string {
     const baseClasses = 'flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200';
-    
+
     if (step === this.currentStep()) {
       return `${baseClasses} bg-blue-100 text-blue-700 border border-blue-200`;
     } else if (step < this.currentStep()) {

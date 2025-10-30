@@ -6,6 +6,7 @@ import { SelectBoxComponent } from '../../../../../shared/components/form/select
 import { TextareaFieldComponent } from '../../../../../shared/components/form/textarea-field/textarea-field.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { defaultCategories, conditions } from './constants';
 
 @Component({
   selector: 'app-basic-info-step',
@@ -14,68 +15,59 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './basic-info-step.component.html'
 })
 export class BasicInfoStepComponent implements OnInit, OnDestroy {
-
-  private fb = inject(FormBuilder);
-
-  @Input({ required: true }) form!: FormGroup;
-  public defaultCategories = [
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'art-collectibles', label: 'Art & Collectibles' },
-    { value: 'jewelry', label: 'Jewelry' },
-    { value: 'vehicles', label: 'Vehicles' },
-    { value: 'real-estate', label: 'Real Estate' },
-    { value: 'antiques', label: 'Antiques' },
-    { value: 'books', label: 'Books' },
-    { value: 'clothing', label: 'Clothing & Accessories' },
-    { value: 'sports', label: 'Sports & Recreation' },
-    { value: 'other', label: 'Other' }
-  ];
   
-  public conditions = [
-    { value: 'new', label: 'New' },
-    { value: 'like-new', label: 'Like New' },
-    { value: 'good', label: 'Good' },
-    { value: 'fair', label: 'Fair' },
-    { value: 'poor', label: 'Poor' }
-  ];
+  private fb = inject(FormBuilder);
+  isBasicFormValid = output<boolean>();
+  proceed = output<{ title: string; description: string; category: string; condition: string }>();
+  private destroy$ = new Subject<void>();
 
-  public basicForm = this.fb.group({
+  basicForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
     description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(1000)]],
     category: ['', [Validators.required]],
     condition: ['', [Validators.required]],
   });
 
-  // @Input() conditions: Array<{ value: string; label: string }> = [];
+  public defaultCategories = defaultCategories;
+  public conditions = conditions;
 
-  validChange = output<boolean>();
-  @Input({ required: true }) getFieldError!: (fieldName: string) => string;
+  get form(): FormGroup {
+    return this.basicForm as FormGroup;
+  }
 
-  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.form.get('title')?.addValidators([Validators.required, Validators.minLength(10), Validators.maxLength(100)]);
-    this.form.get('description')?.addValidators([Validators.required, Validators.minLength(50), Validators.maxLength(1000)]);
-    this.form.get('category')?.addValidators([Validators.required]);
-    this.form.get('condition')?.addValidators([Validators.required]);
-    this.form.updateValueAndValidity({ emitEvent: false });
-
-    this.validChange.emit(this.form?.valid ?? false);
-
+    this.isBasicFormValid.emit(this.form.valid);
     this.form.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.validChange.emit(this.form?.valid ?? false);
+        this.isBasicFormValid.emit(this.form.valid);
       });
   }
 
   onSubmit(): void {
-    console.log("in onSubmit");
+    this.form.markAllAsTouched();
+    if (this.form.valid) {
+      const { title, description, category, condition } = this.form.value as {
+        title: string; description: string; category: string; condition: string;
+      };
+      this.proceed.emit({ title, description, category, condition });
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.form.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) return `${fieldName} is required`;
+      if (field.errors['minlength']) return `${fieldName} is too short`;
+      if (field.errors['maxlength']) return `${fieldName} is too long`;
+    }
+    return '';
   }
 }
 
