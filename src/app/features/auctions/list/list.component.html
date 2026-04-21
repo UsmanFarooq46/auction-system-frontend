@@ -1,13 +1,52 @@
-<div class="auctions-list">
+<div class="auctions-list animate-fadeIn">
   <div class="header">
-    <h1>Live Auctions</h1>
-    <a routerLink="/auctions/create" class="create-btn">Create Auction</a>
-  </div>
-  <div class="auctions-grid">
-    <div class="auction-card" *ngFor="let auction of mockAuctions">
-      <h3>{{ auction.title }}</h3>
-      <p>{{ auction.description }}</p>
-      <span>${{ auction.currentPrice }}</span>
+    <div>
+      <h1>Featured Auctions</h1>
+      <p class="text-gray-500">Discover rare finds and extraordinary items</p>
     </div>
+    <a routerLink="/auctions/create" class="create-btn">
+      Start Selling
+    </a>
   </div>
+
+  @if (isLoading()) {
+    <div class="auctions-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="bg-gray-100 rounded-2xl h-80 animate-pulse"></div>
+      }
+    </div>
+  } @else if (auctions().length === 0) {
+    <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+      <h3 class="text-xl font-semibold text-gray-500">No live auctions available right now.</h3>
+      <p class="text-gray-400 mt-2">Check back later or create your own!</p>
+    </div>
+  } @else {
+    <div class="auctions-grid">
+      @for (auction of auctions(); track auction._id) {
+        <div class="auction-card" [routerLink]="['/auctions', auction._id]">
+          <div class="image-container">
+            <img [src]="getImageUrl(auction.images?.[0])" [alt]="auction.title">
+            <span class="status-badge">{{ auction.status }}</span>
+          </div>
+          <div class="card-content">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold text-indigo-600 uppercase">{{ auction.category }}</span>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-1 line-clamp-1">{{ auction.title }}</h3>
+            <p class="text-sm text-gray-500 mb-4 line-clamp-2 h-10">{{ auction.description }}</p>
+            
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Current Bid</p>
+                <div class="price-tag">{{ formatPrice(auction.currentPrice || auction.startingPrice) }}</div>
+              </div>
+              <button class="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors">
+                Bid Now
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>

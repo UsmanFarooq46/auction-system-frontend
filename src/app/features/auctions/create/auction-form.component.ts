@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, output } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, output, input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextFieldComponent } from '../../../shared/components/form/text-field/text-field.component';
@@ -25,6 +25,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private destroy$ = new Subject<void>();
 
+  initialData = input<any>(null);
   formSubmitted = output<any>();
   formValid = output<boolean>();
 
@@ -41,6 +42,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
 
   selectedImages: File[] = [];
   previewImages: string[] = [];
+  existingImages: string[] = [];
 
   form = this.fb.group({
     // Basic Info
@@ -56,8 +58,40 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     startDate: ['', [Validators.required]],
     endDate: ['', [Validators.required]],
     // Location
-    location: ['', [Validators.required, Validators.minLength(5)]]
+    location: ['', [Validators.required, Validators.minLength(5)]],
+    isPublic: [true]
   });
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.populateForm(data);
+      }
+    });
+  }
+
+  private populateForm(data: any): void {
+    const startDt = new Date(data.startDate);
+    const startIso = new Date(startDt.getTime() - startDt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    
+    this.form.patchValue({
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      condition: data.condition,
+      startingPrice: data.startingPrice,
+      reservePrice: data.reservePrice,
+      duration: data.duration,
+      startDate: startIso,
+      location: data.location,
+      isPublic: data.isPublic ?? true
+    });
+
+    if (data.images && data.images.length > 0) {
+      this.existingImages = data.images;
+    }
+  }
 
   ngOnInit(): void {
     // Set default start date
@@ -142,16 +176,30 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     this.previewImages = this.previewImages.filter((_, i) => i !== index);
   }
 
+  removeExistingImage(index: number): void {
+    this.existingImages = this.existingImages.filter((_, i) => i !== index);
+  }
+
+  getImageUrl(imagePath: string): string {
+    if (imagePath.startsWith('http')) return imagePath;
+    const segments = imagePath.split(/[\\/]uploads[\\/]/);
+    const cleanPath = segments.length > 1 ? segments[1] : segments[0];
+    return `http://localhost:3200/uploads/${cleanPath.replace(/\\/g, '/')}`;
+  }
+
   onSubmit(): void {
     this.form.markAllAsTouched();
-    if (this.form.valid && this.selectedImages.length > 0) {
+    const totalImages = this.selectedImages.length + this.existingImages.length;
+    
+    if (this.form.valid && totalImages > 0) {
       const formData = {
         ...this.form.value,
-        images: this.selectedImages
+        images: this.selectedImages,
+        existingImages: this.existingImages
       };
       this.formSubmitted.emit(formData);
     } else {
-      if (this.selectedImages.length === 0) {
+      if (totalImages === 0) {
         alert('Please select at least one image');
       }
     }

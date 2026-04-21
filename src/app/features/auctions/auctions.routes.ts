@@ -10,6 +10,14 @@ export const auctionsRoutes: Routes = [
     loadComponent: () => import('./create/create.component').then(m => m.CreateAuctionComponent)
   },
   {
+    path: 'my-auctions',
+    loadComponent: () => import('./my-auctions/my-auctions.component').then(m => m.MyAuctionsComponent)
+  },
+  {
+    path: 'edit/:id',
+    loadComponent: () => import('./edit/edit.component').then(m => m.EditAuctionComponent)
+  },
+  {
     path: ':id',
     loadComponent: () => import('./detail/detail.component').then(m => m.DetailComponent)
   }

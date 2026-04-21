@@ -1,3 +1,6 @@
+import { User } from './user.model';
+import { Bid } from './bid.model';
+
 export interface Auction {
   id: string;
   title: string;
