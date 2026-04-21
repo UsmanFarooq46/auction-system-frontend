@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { output } from '@angular/core';
@@ -9,7 +9,7 @@ import { output } from '@angular/core';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './location-step.component.html'
 })
-export class LocationStepComponent {
+export class LocationStepComponent implements OnChanges {
   private fb = inject(FormBuilder);
 
   isLocationFormValid = output<boolean>();
@@ -19,9 +19,17 @@ export class LocationStepComponent {
     location: ['', [Validators.required, Validators.minLength(5)]],
   });
 
+  @Input() initialValue?: { location: string };
+
   ngOnInit(): void {
     this.isLocationFormValid.emit(this.form.valid);
     this.form.valueChanges.subscribe(() => this.isLocationFormValid.emit(this.form.valid));
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialValue'] && this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    }
   }
 
   getFieldError(fieldName: string): string {

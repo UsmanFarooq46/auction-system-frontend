@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 max-w-6xl">
     <!-- Header -->
     <div class="mb-8">
-      <!-- Breadcrumb and actions -->
+      <!-- Breadcrumb -->
       <div class="flex items-center justify-between mb-4">
         <nav class="text-sm text-gray-500" aria-label="Breadcrumb">
           <ol class="flex items-center space-x-2">
@@ -18,168 +18,35 @@
             <li class="text-gray-700 font-medium">Create</li>
           </ol>
         </nav>
-
-        <div class="flex items-center gap-2">
-          <button (click)="togglePreview()"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-              </path>
-            </svg>
-            <span>{{ showPreview() ? 'Hide Preview' : 'Show Preview' }}</span>
-          </button>
-        </div>
       </div>
 
       <!-- Title block -->
       <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-100 p-6">
-        <div class="flex items-start justify-between">
-          <div class="flex items-start gap-4">
-            <div class="shrink-0">
-              <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
-                  </path>
-                </svg>
-              </div>
-            </div>
-            <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Create New Auction</h1>
-              <p class="text-gray-600 mt-1">Provide details, set pricing, and get your listing live.</p>
+        <div class="flex items-start gap-4">
+          <div class="shrink-0">
+            <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                </path>
+              </svg>
             </div>
           </div>
-          <div class="hidden md:flex flex-col items-end gap-2 min-w-[220px]">
-            <div class="flex justify-between items-center w-full text-sm">
-              <span class="text-gray-600">Progress</span>
-              <span class="font-medium text-gray-800">{{ formProgress() }}% • Step {{ currentStep() }} of {{
-                totalSteps() }}</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div
-                class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500 ease-out"
-                [style.width.%]="progressPercentage()"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mobile progress -->
-        <div class="mt-4 md:hidden">
-          <div class="flex justify-between items-center mb-1 text-sm">
-            <span class="text-gray-600">Progress</span>
-            <span class="font-medium text-gray-800">{{ formProgress() }}% • Step {{ currentStep() }} of {{ totalSteps()
-              }}</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div
-              class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500 ease-out"
-              [style.width.%]="progressPercentage()"></div>
-          </div>
-        </div>
-
-        <!-- Integrated Step Navigation -->
-        <div class="mt-6">
-          <div class="flex items-center justify-center">
-            <div class="flex items-center space-x-2 bg-white rounded-lg p-2 shadow-sm border border-gray-200">
-              @for (step of [1,2,3,4,5]; track step) {
-              <button (click)="goToStep(step)" [class]="getStepButtonClasses(step)"
-                class="flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-200">
-                <div class="w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium">
-                  @if (step <= currentStep()) { <span>{{ step }}</span>
-                    }
-                    @if (step < currentStep()) { <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"></path>
-                      </svg>
-                      }
-                </div>
-                <span class="hidden sm:inline">{{ getStepTitle(step) }}</span>
-              </button>
-              }
-            </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Create New Auction</h1>
+            <p class="text-gray-600 mt-1">Provide details, set pricing, and get your listing live.</p>
           </div>
         </div>
       </div>
-
-      <!-- Step Navigation moved into header above -->
     </div>
 
     <!-- Main Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Form Steps -->
+      <!-- Form -->
       <div class="lg:col-span-2">
-        @if (currentStep() === 1) {
-        <app-basic-info-step (isBasicFormValid)="isBasicFormValid($event)" (proceed)="onBasicProceed($event)">
-        </app-basic-info-step>
-        }
-        @if (currentStep() === 2) {
-        <app-pricing-step (isPricingFormValid)="pricingValid.set($event)" (proceed)="onPricingProceed($event)">
-        </app-pricing-step>
-        }
-
-        <!-- Step 1: Basic Information -->
-
-        @if (currentStep() === 3) {
-        <app-timing-step (isTimingFormValid)="timingValid.set($event)" (proceed)="onTimingProceed($event)">
-        </app-timing-step>
-        }
-
-        @if (currentStep() === 4) {
-        <app-location-step (isLocationFormValid)="locationValid.set($event)" (proceed)="onLocationProceed($event)">
-        </app-location-step>
-        }
-
-        @if (currentStep() === 5) {
-        <app-images-step [previewImages]="previewImages()" (remove)="removeImage($event)"
-          (select)="onImageSelected($event)">
-        </app-images-step>
-        }
-
-        <!-- Step Navigation Buttons -->
-        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
-          <button type="button" (click)="previousStep()" [disabled]="currentStep() === 1"
-            class="px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-            <span>Previous</span>
-          </button>
-
-          <div class="flex items-center space-x-4">
-            <button type="button" (click)="autoSave()"
-              class="px-4 py-2 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-              Auto-save
-            </button>
-
-            @if (currentStep() < totalSteps()) { <button type="button" (click)="nextStep()"
-              [disabled]="!canNavigateTo(currentStep()+1) || !canProceed()"
-              class="px-6 py-3 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-              <span>Next</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-              </button>
-              }
-
-              @if (currentStep() === totalSteps()) {
-              <button type="submit" [disabled]="isSubmitting() || !isAllValid()"
-                class="px-8 py-3 text-white bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-                @if (isSubmitting()) {
-                <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                  </path>
-                </svg>
-                }
-                <span>{{ isSubmitting() ? 'Creating Auction...' : 'Create Auction' }}</span>
-              </button>
-              }
-          </div>
-        </div>
+        <app-auction-form 
+          (formSubmitted)="onFormSubmitted($event)">
+        </app-auction-form>
       </div>
     </div>
   </div>

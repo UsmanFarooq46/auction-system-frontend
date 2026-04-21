@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, OnDestroy, output } from '@angular/core';
+import { Component, inject, Input, OnInit, OnDestroy, output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextFieldComponent } from '../../../../../shared/components/form/text-field/text-field.component';
@@ -14,7 +14,7 @@ import { defaultCategories, conditions } from './constants';
   imports: [CommonModule, ReactiveFormsModule, TextFieldComponent, SelectBoxComponent, TextareaFieldComponent],
   templateUrl: './basic-info-step.component.html'
 })
-export class BasicInfoStepComponent implements OnInit, OnDestroy {
+export class BasicInfoStepComponent implements OnInit, OnDestroy, OnChanges {
   
   private fb = inject(FormBuilder);
   isBasicFormValid = output<boolean>();
@@ -31,18 +31,29 @@ export class BasicInfoStepComponent implements OnInit, OnDestroy {
   public defaultCategories = defaultCategories;
   public conditions = conditions;
 
+  @Input() initialValue?: { title: string; description: string; category: string; condition: string };
+
   get form(): FormGroup {
     return this.basicForm as FormGroup;
   }
 
 
   ngOnInit(): void {
+    if (this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    }
     this.isBasicFormValid.emit(this.form.valid);
     this.form.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.isBasicFormValid.emit(this.form.valid);
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialValue'] && this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    }
   }
 
   onSubmit(): void {

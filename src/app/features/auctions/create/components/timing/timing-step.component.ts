@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { output } from '@angular/core';
@@ -11,7 +11,7 @@ import { takeUntil } from 'rxjs/operators';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './timing-step.component.html'
 })
-export class TimingStepComponent {
+export class TimingStepComponent implements OnChanges {
   private fb = inject(FormBuilder);
 
   durations: Array<{ value: number; label: string }> = [
@@ -32,11 +32,17 @@ export class TimingStepComponent {
     endDate: ['', [Validators.required]],
   });
 
+  @Input() initialValue?: { duration: number | null; startDate: string | null; endDate: string | null };
+
   ngOnInit(): void {
-    // default startDate now
-    const now = new Date();
-    const start = now.toISOString().slice(0, 16);
-    this.form.patchValue({ startDate: start });
+    // default startDate now unless initialValue provided
+    if (this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    } else {
+      const now = new Date();
+      const start = now.toISOString().slice(0, 16);
+      this.form.patchValue({ startDate: start });
+    }
 
     // recalc end date on duration or start change
     this.form.valueChanges
@@ -54,6 +60,12 @@ export class TimingStepComponent {
       });
 
     this.isTimingFormValid.emit(this.form.valid);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialValue'] && this.initialValue) {
+      this.form.patchValue(this.initialValue);
+    }
   }
 
   ngOnDestroy(): void {
