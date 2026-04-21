@@ -119,6 +119,7 @@ export class ProfileComponent {
     // You can implement modal or navigation logic here
   }
 
+
   private saveProfileChanges(): void {
     // Implement save logic here
     console.log('Saving profile changes...');

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { User } from '../../../core/models/user.model';
 import { Store } from '@ngrx/store';
 import { selectAuthUser } from '../../../state/auth/auth.selectors';
@@ -14,6 +14,7 @@ import { AuthActions } from '../../../state/auth/auth.actions';
 })
 export class HeaderComponent {
   private store = inject(Store);
+  private router = inject(Router);
 
   currentUser = signal<User | null>(null);
 
@@ -26,5 +27,9 @@ export class HeaderComponent {
 
   logout(): void {
     this.store.dispatch(AuthActions.logout());
+  }
+
+  createAuction(): void {
+    this.router.navigate(['/auctions/create']);
   }
 }

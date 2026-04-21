@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TextFieldComponent } from '../../../shared/components/form/text-field/text-field.component';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -9,7 +10,7 @@ import { selectAuthError, selectAuthLoading } from '../../../state/auth/auth.sel
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TextFieldComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

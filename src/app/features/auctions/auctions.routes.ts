@@ -7,7 +7,7 @@ export const auctionsRoutes: Routes = [
   },
   {
     path: 'create',
-    loadComponent: () => import('./create/create.component').then(m => m.CreateComponent)
+    loadComponent: () => import('./create/create.component').then(m => m.CreateAuctionComponent)
   },
   {
     path: ':id',

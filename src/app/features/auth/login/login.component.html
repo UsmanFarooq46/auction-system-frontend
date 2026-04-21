@@ -17,61 +17,35 @@
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Email Field -->
         <div class="space-y-2">
-          <label for="email" class="block text-sm font-semibold text-gray-700">
-            Email Address
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span class="text-gray-400 text-lg">📧</span>
-            </div>
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
-              class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
-              placeholder="Enter your email"
-              [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-            />
-          </div>
-          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-            <p class="text-red-500 text-sm flex items-center">
-              <span class="mr-1">⚠️</span>
-              Please enter a valid email address
-            </p>
-          }
+          <app-text-field
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            [invalid]="(loginForm.get('email')?.invalid ?? false) && (loginForm.get('email')?.touched ?? false)"
+            [error]="(loginForm.get('email')?.invalid ?? false) && (loginForm.get('email')?.touched ?? false) ? 'Please enter a valid email address' : ''"
+            formControlName="email">
+          </app-text-field>
         </div>
 
         <!-- Password Field -->
         <div class="space-y-2">
-          <label for="password" class="block text-sm font-semibold text-gray-700">
-            Password
-          </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span class="text-gray-400 text-lg">🔒</span>
-            </div>
-            <input
-              id="password"
-              [type]="showPassword() ? 'text' : 'password'"
-              formControlName="password"
-              class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
-              placeholder="Enter your password"
-              [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            />
+          <app-text-field
+            label="Password"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Enter your password"
+            [invalid]="(loginForm.get('password')?.invalid ?? false) && (loginForm.get('password')?.touched ?? false)"
+            [error]="(loginForm.get('password')?.invalid ?? false) && (loginForm.get('password')?.touched ?? false) ? 'Password must be at least 6 characters' : ''"
+            formControlName="password">
+          </app-text-field>
+          <div class="flex justify-end">
             <button
               type="button"
               (click)="togglePasswordVisibility()"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+              class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
             >
-              <span class="text-lg">{{ showPassword() ? '🙈' : '👁️' }}</span>
+              {{ showPassword() ? 'Hide password' : 'Show password' }}
             </button>
           </div>
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <p class="text-red-500 text-sm flex items-center">
-              <span class="mr-1">⚠️</span>
-              Password must be at least 6 characters
-            </p>
-          }
         </div>
 
         <!-- Remember Me & Forgot Password -->
