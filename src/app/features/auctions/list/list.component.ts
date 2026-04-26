@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuctionService } from '../../../core/services/auction.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-auctions-list',
@@ -28,80 +30,117 @@ import { RouterModule } from '@angular/router';
     }
     
     .create-btn {
-      background-color: #007bff;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 0.25rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
       text-decoration: none;
-      transition: background-color 0.2s;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
     
     .create-btn:hover {
-      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
     
     .auctions-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      gap: 2rem;
     }
     
     .auction-card {
       background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      padding: 1rem;
-      transition: box-shadow 0.2s;
+      border-radius: 1rem;
+      border: 1px solid #f3f4f6;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .auction-card:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-container {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-cover: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .auction-card:hover .image-container img {
+      transform: scale(1.1);
+    }
+
+    .card-content {
+      padding: 1.5rem;
     }
     
-    .auction-card h3 {
+    .price-tag {
       font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #333;
+      font-weight: 800;
+      color: #059669;
     }
-    
-    .auction-card p {
-      color: #666;
-      margin-bottom: 1rem;
-    }
-    
-    .auction-card span {
-      font-size: 1.125rem;
-      font-weight: bold;
-      color: #28a745;
+
+    .status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
     }
   `]
 })
-export class ListComponent {
-  mockAuctions = [
-    {
-      id: '1',
-      title: 'Vintage Rolex Watch',
-      description: 'Beautiful vintage Rolex watch in excellent condition',
-      currentPrice: 2500,
-      timeLeft: '2h 30m',
-      image: 'https://via.placeholder.com/300x200'
-    },
-    {
-      id: '2',
-      title: 'Antique Painting',
-      description: 'Rare 19th century oil painting by unknown artist',
-      currentPrice: 1200,
-      timeLeft: '5h 15m',
-      image: 'https://via.placeholder.com/300x200'
-    },
-    {
-      id: '3',
-      title: 'Diamond Ring',
-      description: 'Stunning diamond engagement ring, 1.5 carat',
-      currentPrice: 3500,
-      timeLeft: '1d 3h',
-      image: 'https://via.placeholder.com/300x200'
-    }
-  ];
+export class ListComponent implements OnInit {
+  private auctionService = inject(AuctionService);
+  
+  auctions = signal<any[]>([]);
+  isLoading = signal(true);
+
+  ngOnInit(): void {
+    this.loadAuctions();
+  }
+
+  loadAuctions(): void {
+    this.isLoading.set(true);
+    this.auctionService.getAuctions({})
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.auctions.set(res.data?.auctions || []);
+        },
+        error: (err) => console.error('Error loading auctions:', err)
+      });
+  }
+
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath) return 'https://via.placeholder.com/400x300?text=No+Image';
+    if (imagePath.startsWith('http')) return imagePath;
+
+    // Remove anything before and including 'uploads/'
+    const cleanPath = imagePath.replace(/^.*uploads[\\/]/, '');
+    return `http://localhost:3200/uploads/${cleanPath.replace(/\\/g, '/')}`;
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('en-PK', {
+      style: 'currency',
+      currency: 'PKR',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
 }

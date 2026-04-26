@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token) {
-      modifiedReq = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+      modifiedReq = req.clone({ setHeaders: { 'auth-token': token } });
     }
   } catch {
     // ignore storage access errors (e.g., SSR)
