@@ -25,8 +25,11 @@
       @for (auction of auctions(); track auction._id) {
         <div class="auction-card" [routerLink]="['/auctions', auction._id]">
           <div class="image-container">
+            <div class="absolute top-4 left-4 z-10">
+              <app-countdown [endDate]="auction.endDate" mode="list"></app-countdown>
+            </div>
             <img [src]="getImageUrl(auction.images?.[0])" [alt]="auction.title">
-            <span class="status-badge">{{ auction.status }}</span>
+            <span class="status-badge absolute bottom-4 right-4">{{ auction.status }}</span>
           </div>
           <div class="card-content">
             <div class="flex justify-between items-start mb-2">
@@ -38,11 +41,19 @@
             <div class="flex items-end justify-between">
               <div>
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Current Bid</p>
-                <div class="price-tag">{{ formatPrice(auction.currentPrice || auction.startingPrice) }}</div>
+                <div class="price-tag">{{ formatPrice(auction.currentBid || auction.startingPrice) }}</div>
               </div>
-              <button class="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors">
-                Bid Now
-              </button>
+              @if (isOwner(auction)) {
+                <button [routerLink]="['/auctions/edit', auction._id]" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors">
+                  Edit Auction
+                </button>
+              } @else {
+                <button 
+                  (click)="onBid(auction); $event.stopPropagation()"
+                  class="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors">
+                  Bid Now
+                </button>
+              }
             </div>
           </div>
         </div>

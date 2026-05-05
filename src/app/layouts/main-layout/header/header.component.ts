@@ -20,7 +20,6 @@ export class HeaderComponent {
 
   constructor() {
     this.store.select(selectAuthUser).subscribe((user) => {
-      console.log("user in header: ", user);
       this.currentUser.set(user);
     });
   }

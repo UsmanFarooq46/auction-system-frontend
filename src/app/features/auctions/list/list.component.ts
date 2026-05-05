@@ -1,118 +1,49 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuctionService } from '../../../core/services/auction.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
+import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
 
 @Component({
   selector: 'app-auctions-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CountdownComponent],
   templateUrl: './list.component.html',
-  styles: [`
-    .auctions-list {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-    
-    .header h1 {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .create-btn {
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    
-    .create-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .auctions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-    
-    .auction-card {
-      background: white;
-      border-radius: 1rem;
-      border: 1px solid #f3f4f6;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .auction-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    .image-container {
-      height: 200px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-cover: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .auction-card:hover .image-container img {
-      transform: scale(1.1);
-    }
-
-    .card-content {
-      padding: 1.5rem;
-    }
-    
-    .price-tag {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #059669;
-    }
-
-    .status-badge {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(4px);
-    }
-  `]
+  styleUrl: './list.component.scss',
 })
 export class ListComponent implements OnInit {
   private auctionService = inject(AuctionService);
-  
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   auctions = signal<any[]>([]);
   isLoading = signal(true);
 
   ngOnInit(): void {
     this.loadAuctions();
+  }
+
+  isOwner(auction: any): boolean {
+    const user = this.authService.getCurrentUser();
+    if (!user || !auction.seller) return false;
+
+    // Mongoose usually returns _id, frontend model uses id
+    const userId = user.id || (user as any)._id;
+    const sellerId = auction.seller._id || auction.seller;
+
+    return userId === sellerId;
+  }
+
+  onBid(auction: any): void {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/auctions/bid', auction._id]);
+    } else {
+      this.router.navigate(['/auth/login'], { 
+        queryParams: { returnUrl: `/auctions/bid/${auction._id}` } 
+      });
+    }
   }
 
   loadAuctions(): void {
@@ -121,6 +52,7 @@ export class ListComponent implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
+          console.log('Auctions loaded:', res.data?.auctions);
           this.auctions.set(res.data?.auctions || []);
         },
         error: (err) => console.error('Error loading auctions:', err)

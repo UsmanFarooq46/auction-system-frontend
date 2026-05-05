@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 export const auctionsRoutes: Routes = [
   {
@@ -16,6 +17,11 @@ export const auctionsRoutes: Routes = [
   {
     path: 'edit/:id',
     loadComponent: () => import('./edit/edit.component').then(m => m.EditAuctionComponent)
+  },
+  {
+    path: 'bid/:id',
+    loadComponent: () => import('./place-bid/place-bid.component').then(m => m.PlaceBidComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: ':id',
