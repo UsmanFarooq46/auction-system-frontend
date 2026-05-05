@@ -36,9 +36,8 @@ export class CreateAuctionComponent {
       )
       .subscribe({
         next: (response) => {
-          console.log('Auction created successfully:', response);
           alert('Auction successfully created via API!');
-          // this.router.navigate(['/auctions']);
+          this.router.navigate(['/auctions']);
         },
         error: (error) => {
           console.error('Error creating auction:', error);

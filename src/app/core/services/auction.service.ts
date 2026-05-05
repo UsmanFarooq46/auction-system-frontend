@@ -68,6 +68,13 @@ export class AuctionService {
   }
 
   /**
+   * Get auctions where the current user has placed a bid
+   */
+  getMyBids(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/my-bids`);
+  }
+
+  /**
    * Update auction
    */
   updateAuction(id: string, auctionData: any): Observable<any> {
@@ -79,5 +86,12 @@ export class AuctionService {
    */
   deleteAuction(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Place a bid on an auction
+   */
+  placeBid(id: string, amount: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/bid`, { amount });
   }
 }

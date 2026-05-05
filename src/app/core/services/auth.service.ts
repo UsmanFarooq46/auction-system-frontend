@@ -13,7 +13,7 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // this.loadUserFromStorage();
+    this.loadUserFromStorage();
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {

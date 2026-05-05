@@ -33,7 +33,9 @@ export class AuthEffects {
           if (rememberMe && typeof window !== 'undefined') {
             localStorage.setItem('rememberMe', 'true');
           }
-          this.router.navigate(['/']);
+
+          const returnUrl = this.router.routerState.snapshot.root.queryParams['returnUrl'] || '/';
+          this.router.navigateByUrl(returnUrl);
         })
       ),
     { dispatch: false }
@@ -65,14 +67,10 @@ export class AuthEffects {
             const user = localStorage.getItem('currentUser');
             const token = localStorage.getItem('token');
             const refreshToken = localStorage.getItem('refreshToken');
-            
-            console.log('Loading from storage:', { user, token, refreshToken });
-            
+
             if (user && token) {
               try {
                 const parsedUser = JSON.parse(user);
-                console.log('Parsed user from storage:', parsedUser);
-                // Dispatch setUser action which will also load tokens from localStorage
                 this.store.dispatch(AuthActions.setUser({ user: parsedUser }));
               } catch (error) {
                 console.error('Error parsing user from storage:', error);
