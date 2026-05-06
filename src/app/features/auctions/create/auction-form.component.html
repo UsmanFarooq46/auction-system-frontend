@@ -1,5 +1,21 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" [formGroup]="form">
-  <h2 class="text-2xl font-semibold text-gray-900 mb-6">Create New Auction</h2>
+  <h2 class="text-2xl font-semibold text-gray-900 mb-6">{{ initialData() ? 'Edit Auction' : 'Create New Auction' }}</h2>
+
+  @if (isLive()) {
+  <div class="mb-8 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 rounded-r-lg flex items-start gap-3">
+    <svg class="w-6 h-6 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+      </path>
+    </svg>
+    <div>
+      <p class="font-bold">Active/Ended Auction Notice</p>
+      <p class="text-sm">Since this auction is live or has ended, critical fields like the **Title** and **Pricing** are
+        locked to protect the integrity of existing bids. You can still add more images, update the description, or
+        change the visibility.</p>
+    </div>
+  </div>
+  }
 
   <!-- Basic Information Section -->
   <div class="mb-8">
@@ -12,46 +28,31 @@
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="md:col-span-2">
-        <app-text-field 
-          label="Title *" 
-          type="text" 
-          placeholder="Enter your title"
+        <app-text-field label="Title *" type="text" placeholder="Enter your title"
           [invalid]="(form.get('title')?.invalid ?? false) && (form.get('title')?.touched ?? false)"
-          [error]="getFieldError('title')"
-          formControlName="title">
+          [error]="getFieldError('title')" formControlName="title">
         </app-text-field>
       </div>
 
       <div>
-        <app-select-box 
-          label="Category *" 
-          placeholder="Select a category" 
-          [options]="defaultCategories"
+        <app-select-box label="Category *" placeholder="Select a category" [options]="defaultCategories"
           [invalid]="(form.get('category')?.invalid ?? false) && (form.get('category')?.touched ?? false)"
-          [error]="getFieldError('category')" 
-          formControlName="category">
+          [error]="getFieldError('category')" formControlName="category">
         </app-select-box>
       </div>
 
       <div>
-        <app-select-box 
-          label="Condition *" 
-          placeholder="Select a condition" 
-          [options]="conditions"
+        <app-select-box label="Condition *" placeholder="Select a condition" [options]="conditions"
           [invalid]="(form.get('condition')?.invalid ?? false) && (form.get('condition')?.touched ?? false)"
-          [error]="getFieldError('condition')" 
-          formControlName="condition">
+          [error]="getFieldError('condition')" formControlName="condition">
         </app-select-box>
       </div>
 
       <div class="md:col-span-2">
-        <app-textarea-field
-          label="Description *"
-          placeholder="Provide detailed information about your item..."
+        <app-textarea-field label="Description *" placeholder="Provide detailed information about your item..."
           [rows]="6"
           [invalid]="(form.get('description')?.invalid ?? false) && (form.get('description')?.touched ?? false)"
-          [error]="getFieldError('description')"
-          formControlName="description">
+          [error]="getFieldError('description')" formControlName="description">
         </app-textarea-field>
         <p class="text-gray-500 text-sm mt-1">{{ form.get('description')?.value?.length || 0 }}/1000 characters</p>
       </div>
@@ -62,7 +63,9 @@
   <div class="mb-8">
     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
       <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+        </path>
       </svg>
       Pricing
     </h3>
@@ -70,28 +73,20 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Starting Price (PKR) *</label>
         <div class="relative">
-          <input 
-            type="number" 
-            formControlName="startingPrice"
-            placeholder="0"
-            min="1"
+          <input type="number" formControlName="startingPrice" placeholder="0" min="1"
             class="w-full px-4 py-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
             [class.border-red-500]="form.get('startingPrice')?.invalid && form.get('startingPrice')?.touched">
           <span class="absolute left-3 top-3 text-gray-500">₨</span>
         </div>
         @if (getFieldError('startingPrice')) {
-          <p class="text-red-500 text-sm mt-1">{{ getFieldError('startingPrice') }}</p>
+        <p class="text-red-500 text-sm mt-1">{{ getFieldError('startingPrice') }}</p>
         }
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Reserve Price (PKR)</label>
         <div class="relative">
-          <input 
-            type="number" 
-            formControlName="reservePrice"
-            placeholder="0"
-            min="1"
+          <input type="number" formControlName="reservePrice" placeholder="0" min="1"
             class="w-full px-4 py-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
           <span class="absolute left-3 top-3 text-gray-500">₨</span>
         </div>
@@ -100,51 +95,46 @@
     </div>
   </div>
 
-  <!-- Timing Section -->
   <div class="mb-8">
     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
       <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
       </svg>
       Auction Timing
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Duration *</label>
-        <select 
-          formControlName="duration"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+        <select formControlName="duration"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors"
           [class.border-red-500]="form.get('duration')?.invalid && form.get('duration')?.touched">
           <option value="">Select duration</option>
           @for (duration of durations; track duration.value) {
-            <option [value]="duration.value">{{ duration.label }}</option>
+          <option [value]="duration.value">{{ duration.label }}</option>
           }
         </select>
         @if (getFieldError('duration')) {
-          <p class="text-red-500 text-sm mt-1">{{ getFieldError('duration') }}</p>
+        <p class="text-red-500 text-sm mt-1">{{ getFieldError('duration') }}</p>
         }
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
-        <input 
-          type="datetime-local" 
-          formControlName="startDate"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+        <input type="datetime-local" formControlName="startDate"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-colors"
           [class.border-red-500]="form.get('startDate')?.invalid && form.get('startDate')?.touched">
         @if (getFieldError('startDate')) {
-          <p class="text-red-500 text-sm mt-1">{{ getFieldError('startDate') }}</p>
+        <p class="text-red-500 text-sm mt-1">{{ getFieldError('startDate') }}</p>
         }
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">End Date *</label>
-        <input 
-          type="datetime-local" 
-          formControlName="endDate"
-          readonly
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
-        <p class="text-gray-500 text-sm mt-1">Automatically calculated</p>
+        <input type="datetime-local" formControlName="endDate" [readonly]="form.get('duration')?.value !== 0"
+          [class]="'w-full px-4 py-3 border rounded-lg transition-colors ' + (form.get('duration')?.value === 0 ? 'border-gray-300 bg-white' : 'border-gray-200 bg-gray-50 text-gray-500')">
+        <p class="text-gray-500 text-[10px] mt-1">{{ form.get('duration')?.value === 0 ? 'Set manual end date' :
+          'Automatically calculated' }}</p>
       </div>
     </div>
   </div>
@@ -153,30 +143,90 @@
   <div class="mb-8">
     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
       <svg class="w-5 h-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
+        </path>
       </svg>
       Visibility & Location
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Item Location *</label>
-        <input 
-          type="text" 
-          formControlName="location"
-          placeholder="Enter city, province, Pakistan"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+      <div class="md:col-span-2">
+        <label class="block text-sm font-black text-gray-900 uppercase tracking-widest mb-2">Item Location *</label>
+        <input type="text" formControlName="location" placeholder="Enter city, province, Pakistan"
+          class="w-full px-4 py-4 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 transition-all outline-none"
           [class.border-red-500]="form.get('location')?.invalid && form.get('location')?.touched">
         @if (getFieldError('location')) {
-          <p class="text-red-500 text-sm mt-1">{{ getFieldError('location') }}</p>
+        <p class="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{{ getFieldError('location')
+          }}</p>
         }
       </div>
-      <div class="flex items-center pt-8">
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" formControlName="isPublic" class="sr-only peer">
-          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:width-5 after:transition-all peer-checked:bg-blue-600"></div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Make Auction Public</span>
-        </label>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-black text-gray-900 uppercase tracking-widest mb-4">Auction Visibility</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Public Option -->
+          <div (click)="form.get('isPublic')?.setValue(true)"
+            [class]="'cursor-pointer p-6 rounded-[2rem] border-2 transition-all duration-300 flex items-start gap-4 ' + (form.get('isPublic')?.value ? 'border-indigo-600 bg-indigo-50/50 ring-4 ring-indigo-50' : 'border-gray-100 bg-white hover:border-gray-200')">
+            <div
+              [class]="'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ' + (form.get('isPublic')?.value ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400')">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                </path>
+              </svg>
+            </div>
+            <div>
+              <p
+                [class]="'font-black uppercase tracking-widest text-xs mb-1 ' + (form.get('isPublic')?.value ? 'text-indigo-600' : 'text-gray-900')">
+                Public Auction</p>
+              <p class="text-xs text-gray-500 leading-relaxed">Visible to everyone in the gallery. Perfect for maximum
+                reach.</p>
+            </div>
+            <div class="ml-auto">
+              <div
+                [class]="'w-5 h-5 rounded-full border-2 flex items-center justify-center ' + (form.get('isPublic')?.value ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300')">
+                @if (form.get('isPublic')?.value) {
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Private Option -->
+          <div (click)="form.get('isPublic')?.setValue(false)"
+            [class]="'cursor-pointer p-6 rounded-[2rem] border-2 transition-all duration-300 flex items-start gap-4 ' + (!form.get('isPublic')?.value ? 'border-gray-900 bg-gray-50 ring-4 ring-gray-100' : 'border-gray-100 bg-white hover:border-gray-200')">
+            <div
+              [class]="'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ' + (!form.get('isPublic')?.value ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400')">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18">
+                </path>
+              </svg>
+            </div>
+            <div>
+              <p
+                [class]="'font-black uppercase tracking-widest text-xs mb-1 ' + (!form.get('isPublic')?.value ? 'text-gray-900' : 'text-gray-900')">
+                Private Auction</p>
+              <p class="text-xs text-gray-500 leading-relaxed">Only visible via direct link. Ideal for exclusive bidding
+                circles.</p>
+            </div>
+            <div class="ml-auto">
+              <div
+                [class]="'w-5 h-5 rounded-full border-2 flex items-center justify-center ' + (!form.get('isPublic')?.value ? 'border-gray-900 bg-gray-900' : 'border-gray-300')">
+                @if (!form.get('isPublic')?.value) {
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -185,26 +235,22 @@
   <div class="mb-8">
     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
       <svg class="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+        </path>
       </svg>
       Images
     </h3>
-    
+
     <!-- Upload Area -->
-    <div 
+    <div
       class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors"
-      (dragover)="onDragOver($event)"
-      (drop)="onDrop($event)">
-      <input 
-        type="file" 
-        multiple 
-        accept="image/*"
-        (change)="onImageSelected($event)"
-        class="hidden"
-        id="imageUpload">
+      (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <input type="file" multiple accept="image/*" (change)="onImageSelected($event)" class="hidden" id="imageUpload">
       <label for="imageUpload" class="cursor-pointer">
         <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
         </svg>
         <p class="text-lg font-medium text-gray-700 mb-2">Upload New Images</p>
         <p class="text-gray-500">Click to browse or drag and drop</p>
@@ -214,54 +260,47 @@
 
     <!-- Previews -->
     @if (existingImages.length > 0 || previewImages.length > 0) {
-      <div class="mt-6">
-        <h4 class="text-lg font-medium text-gray-900 mb-4">Selected Images ({{ existingImages.length + previewImages.length }}/10)</h4>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <!-- Existing Images -->
-          @for (img of existingImages; track img; let i = $index) {
-            <div class="relative group">
-              <img [src]="getImageUrl(img)" alt="Existing" class="w-full h-32 object-cover rounded-lg">
-              <div class="absolute top-1 left-1 bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded shadow">Saved</div>
-              <button 
-                type="button"
-                (click)="removeExistingImage(i)"
-                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          }
-          <!-- New Previews -->
-          @for (preview of previewImages; track preview; let i = $index) {
-            <div class="relative group">
-              <img [src]="preview" alt="Preview" class="w-full h-32 object-cover rounded-lg border-2 border-green-400">
-              <div class="absolute top-1 left-1 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded shadow">New</div>
-              <button 
-                type="button"
-                (click)="removeImage(i)"
-                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          }
+    <div class="mt-6">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">Selected Images ({{ existingImages.length +
+        previewImages.length }}/10)</h4>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- Existing Images -->
+        @for (img of existingImages; track img; let i = $index) {
+        <div class="relative group">
+          <img [src]="getImageUrl(img)" alt="Existing" class="w-full h-32 object-cover rounded-lg">
+          <div class="absolute top-1 left-1 bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded shadow">Saved</div>
+          <button type="button" (click)="removeExistingImage(i)"
+            class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
+        }
+        <!-- New Previews -->
+        @for (preview of previewImages; track preview; let i = $index) {
+        <div class="relative group">
+          <img [src]="preview" alt="Preview" class="w-full h-32 object-cover rounded-lg border-2 border-green-400">
+          <div class="absolute top-1 left-1 bg-green-600 text-white text-[10px] px-2 py-0.5 rounded shadow">New</div>
+          <button type="button" (click)="removeImage(i)"
+            class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        }
       </div>
+    </div>
     }
   </div>
 
   <!-- Submit Button -->
   <div class="flex justify-end pt-6 border-t border-gray-200">
-    <button 
-      type="button"
-      (click)="onSubmit()"
+    <button type="button" (click)="onSubmit()"
       [disabled]="!form.valid || (existingImages.length + previewImages.length) === 0"
       class="px-8 py-3 text-white bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
       {{ initialData() ? 'Update Auction' : 'Create Auction' }}
     </button>
   </div>
 </div>
-
-

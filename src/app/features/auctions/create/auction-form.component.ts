@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, output, input, effect } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, output, input, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextFieldComponent } from '../../../shared/components/form/text-field/text-field.component';
@@ -25,6 +25,8 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private destroy$ = new Subject<void>();
 
+  isLive = signal(false);
+
   initialData = input<any>(null);
   formSubmitted = output<any>();
   formValid = output<boolean>();
@@ -37,7 +39,8 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     { value: 3, label: '3 Days' },
     { value: 7, label: '1 Week' },
     { value: 14, label: '2 Weeks' },
-    { value: 30, label: '1 Month' }
+    { value: 30, label: '1 Month' },
+    { value: 0, label: 'Custom Scheduling' }
   ];
 
   selectedImages: File[] = [];
@@ -74,7 +77,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
   private populateForm(data: any): void {
     const startDt = new Date(data.startDate);
     const startIso = new Date(startDt.getTime() - startDt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-    
+
     this.form.patchValue({
       title: data.title,
       description: data.description,
@@ -87,6 +90,17 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
       location: data.location,
       isPublic: data.isPublic ?? true
     });
+
+    // Check if live or ended
+    if (data.status === 'live' || data.status === 'ended') {
+      this.isLive.set(true);
+      // Disable restricted fields
+      this.form.get('title')?.disable();
+      this.form.get('category')?.disable();
+      this.form.get('condition')?.disable();
+      this.form.get('startingPrice')?.disable();
+      this.form.get('reservePrice')?.disable();
+    }
 
     if (data.images && data.images.length > 0) {
       this.existingImages = data.images;
@@ -106,6 +120,11 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
         const duration = this.form.get('duration')?.value as number | null;
         const startDate = this.form.get('startDate')?.value as string | null;
         
+        if (duration === 0) {
+          this.formValid.emit(this.form.valid);
+          return;
+        }
+
         if (duration && startDate) {
           const startDt = new Date(startDate);
           const end = new Date(startDt.getTime() + duration * 24 * 60 * 60 * 1000);
@@ -159,7 +178,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
   private handleFileSelection(files: FileList | File[]): void {
     const fileArray = Array.from(files);
     const totalImages = this.selectedImages.length + fileArray.length;
-    
+
     if (totalImages > 10) {
       alert('Maximum 10 images allowed');
       return;
@@ -190,10 +209,11 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     this.form.markAllAsTouched();
     const totalImages = this.selectedImages.length + this.existingImages.length;
-    
+
     if (this.form.valid && totalImages > 0) {
+      // Get values including disabled ones
       const formData = {
-        ...this.form.value,
+        ...this.form.getRawValue(),
         images: this.selectedImages,
         existingImages: this.existingImages
       };

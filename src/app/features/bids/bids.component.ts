@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { AuctionService } from '../../core/services/auction.service';
 import { finalize } from 'rxjs';
 import { CountdownComponent } from '../../shared/components/countdown/countdown.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-bids',
@@ -14,6 +15,7 @@ import { CountdownComponent } from '../../shared/components/countdown/countdown.
 })
 export class BidsComponent implements OnInit {
   private auctionService = inject(AuctionService);
+  private authService = inject(AuthService);
 
   auctions = signal<any[]>([]);
   isLoading = signal(true);
@@ -60,5 +62,13 @@ export class BidsComponent implements OnInit {
       case 'ended': return 'bg-gray-100 text-gray-700 border-gray-200';
       default: return 'bg-blue-100 text-blue-700 border-blue-200';
     }
+  }
+
+  isOwner(auction: any): boolean {
+    const user = this.authService.getCurrentUser();
+    if (!user || !auction.seller) return false;
+    const userId = user.id || (user as any)._id;
+    const sellerId = auction.seller._id || auction.seller;
+    return userId === sellerId;
   }
 }

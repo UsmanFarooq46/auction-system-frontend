@@ -29,9 +29,8 @@ export class ListComponent implements OnInit {
     const user = this.authService.getCurrentUser();
     if (!user || !auction.seller) return false;
 
-    // Mongoose usually returns _id, frontend model uses id
-    const userId = user.id || (user as any)._id;
-    const sellerId = auction.seller._id || auction.seller;
+    const userId = (user.id || (user as any)._id)?.toString();
+    const sellerId = (auction.seller._id || auction.seller)?.toString();
 
     return userId === sellerId;
   }

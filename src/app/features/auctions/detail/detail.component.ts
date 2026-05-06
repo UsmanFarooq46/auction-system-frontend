@@ -32,7 +32,12 @@ export class DetailComponent implements OnInit, OnDestroy {
   isOwner = computed(() => {
     const user = this.currentUser();
     const currentAuction = this.auction();
-    return user && currentAuction && (user._id === currentAuction.seller?._id || user._id === currentAuction.seller);
+    if (!user || !currentAuction || !currentAuction.seller) return false;
+
+    const userId = (user._id || user.id)?.toString();
+    const sellerId = (currentAuction.seller._id || currentAuction.seller)?.toString();
+
+    return userId === sellerId;
   });
 
   ngOnInit(): void {

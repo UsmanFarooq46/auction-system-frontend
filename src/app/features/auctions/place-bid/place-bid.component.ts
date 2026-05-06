@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuctionService } from '../../../core/services/auction.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
 import { TextFieldComponent } from '../../../shared/components/form/text-field/text-field.component';
 import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
@@ -18,6 +19,7 @@ export class PlaceBidComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private auctionService = inject(AuctionService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   auction = signal<any>(null);
@@ -45,9 +47,22 @@ export class PlaceBidComponent implements OnInit {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          this.auction.set(res.data);
+          const auctionData = res.data;
+          
+          // Check if user is the owner
+          const user = this.authService.getCurrentUser();
+          const userId = user?.id || (user as any)?._id;
+          const sellerId = auctionData.seller?._id || auctionData.seller;
+
+          if (userId && sellerId && userId === sellerId) {
+            console.warn('Owner attempted to access bidding page');
+            this.router.navigate(['/auctions', auctionData._id]);
+            return;
+          }
+
+          this.auction.set(auctionData);
           // Set default bid amount to currentBid + 10
-          const minNextBid = (res.data.currentBid || res.data.startingPrice) + 10;
+          const minNextBid = (auctionData.currentBid || auctionData.startingPrice) + 10;
           this.bidForm.patchValue({ amount: minNextBid });
           this.bidForm.get('amount')?.setValidators([
             Validators.required, 
