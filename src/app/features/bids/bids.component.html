@@ -7,7 +7,8 @@
         <p class="text-gray-500 mt-2 text-lg">Track the auctions you are currently winning.</p>
       </div>
       <div class="flex gap-4">
-        <a routerLink="/auctions" class="px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold text-gray-600 hover:border-indigo-100 hover:text-indigo-600 transition-all shadow-sm">
+        <a routerLink="/auctions"
+          class="px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold text-gray-600 hover:border-indigo-100 hover:text-indigo-600 transition-all shadow-sm">
           Browse Auctions
         </a>
       </div>
@@ -15,91 +16,106 @@
 
     <!-- Content -->
     @if (isLoading()) {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @for (i of [1,2,3]; track i) {
-          <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm h-96 animate-pulse">
-            <div class="h-48 bg-gray-100"></div>
-            <div class="p-6 space-y-4">
-              <div class="h-6 bg-gray-100 rounded w-3/4"></div>
-              <div class="h-4 bg-gray-100 rounded w-full"></div>
-              <div class="h-10 bg-gray-100 rounded w-1/2 mt-4"></div>
-            </div>
-          </div>
-        }
-      </div>
-    } @else if (error()) {
-      <div class="bg-red-50 border-2 border-red-100 rounded-3xl p-12 text-center">
-        <p class="text-red-600 font-bold mb-4 text-lg">{{ error() }}</p>
-        <button (click)="loadMyBids()" class="px-8 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
-          Try Again
-        </button>
-      </div>
-    } @else if (auctions().length === 0) {
-      <div class="bg-white border-2 border-dashed border-gray-200 rounded-[3rem] p-20 text-center">
-        <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
-          <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-          </svg>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (i of [1,2,3]; track i) {
+      <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm h-96 animate-pulse">
+        <div class="h-48 bg-gray-100"></div>
+        <div class="p-6 space-y-4">
+          <div class="h-6 bg-gray-100 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-100 rounded w-full"></div>
+          <div class="h-10 bg-gray-100 rounded w-1/2 mt-4"></div>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">No active bids found</h3>
-        <p class="text-gray-500 mb-8 max-w-md mx-auto text-lg">You aren't the highest bidder on any live auctions right now. Time to find something extraordinary!</p>
-        <a routerLink="/auctions" class="px-10 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-          Start Bidding
-        </a>
       </div>
+      }
+    </div>
+    } @else if (error()) {
+    <div class="bg-red-50 border-2 border-red-100 rounded-3xl p-12 text-center">
+      <p class="text-red-600 font-bold mb-4 text-lg">{{ error() }}</p>
+      <button (click)="loadMyBids()"
+        class="px-8 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors">
+        Try Again
+      </button>
+    </div>
+    } @else if (auctions().length === 0) {
+    <div class="bg-white border-2 border-dashed border-gray-200 rounded-[3rem] p-20 text-center">
+      <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">No active bids found</h3>
+      <p class="text-gray-500 mb-8 max-w-md mx-auto text-lg">You aren't the highest bidder on any live auctions right
+        now. Time to find something extraordinary!</p>
+      <a routerLink="/auctions"
+        class="px-10 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+        Start Bidding
+      </a>
+    </div>
     } @else {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @for (auction of auctions(); track auction._id) {
-          <div class="auction-bid-card bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group">
-            <!-- Image Section -->
-            <div class="relative h-56 overflow-hidden">
-              <img [src]="getImageUrl(auction.images?.[0])" [alt]="auction.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-              <div class="absolute top-4 left-4 flex flex-col gap-2">
-                <span [class]="'px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ' + getStatusColor(auction.status)">
-                  {{ auction.status }}
-                </span>
-                <app-countdown [endDate]="auction.endDate"></app-countdown>
-              </div>
-              <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
-                <p class="text-white/80 text-xs font-bold uppercase tracking-widest">{{ auction.category }}</p>
-                <h3 class="text-white text-xl font-bold line-clamp-1">{{ auction.title }}</h3>
-              </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (auction of auctions(); track auction._id) {
+      <div
+        class="auction-bid-card bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group cursor-pointer"
+        [routerLink]="['/auctions', auction._id]">
+        <!-- Image Section -->
+        <div class="relative h-56 overflow-hidden">
+          <img [src]="getImageUrl(auction.images?.[0])" [alt]="auction.title"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+          <div class="absolute top-4 left-4 flex flex-col gap-2">
+            <span
+              [class]="'px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ' + getStatusColor(auction.status)">
+              {{ auction.status }}
+            </span>
+            <app-countdown [endDate]="auction.endDate"></app-countdown>
+          </div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
+            <p class="text-white/80 text-xs font-bold uppercase tracking-widest">{{ auction.category }}</p>
+            <h3 class="text-white text-xl font-bold line-clamp-1">{{ auction.title }}</h3>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Your Winning Bid</p>
+              <p class="text-3xl font-black text-indigo-600 tracking-tighter">{{ formatPrice(auction.currentBid) }}</p>
             </div>
-
-            <!-- Card Body -->
-            <div class="p-8">
-              <div class="flex items-center justify-between mb-8">
-                <div>
-                  <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Your Winning Bid</p>
-                  <p class="text-3xl font-black text-indigo-600 tracking-tighter">{{ formatPrice(auction.currentBid) }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-500">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-2xl">
-                <img [src]="getImageUrl(auction.seller?.profileImage)" class="w-10 h-10 rounded-full bg-gray-200 object-cover">
-                <div>
-                  <p class="text-[10px] text-gray-400 font-bold uppercase">Seller</p>
-                  <p class="text-sm font-bold text-gray-700">{{ auction.seller?.firstName }} {{ auction.seller?.lastName }}</p>
-                </div>
-              </div>
-
-              <div class="flex gap-3">
-                <a [routerLink]="['/auctions', auction._id]" class="flex-1 py-4 bg-gray-900 text-white text-center rounded-2xl font-black text-sm hover:bg-black transition-all">
-                  View
-                </a>
-                <a [routerLink]="['/auctions/bid', auction._id]" class="flex-1 py-4 bg-indigo-50 text-indigo-600 text-center rounded-2xl font-black text-sm hover:bg-indigo-100 transition-all border border-indigo-100">
-                  Bid Again
-                </a>
-              </div>
+            <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
             </div>
           </div>
-        }
+
+          <div class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-2xl">
+            <img [src]="getImageUrl(auction.seller?.profileImage)"
+              class="w-10 h-10 rounded-full bg-gray-200 object-cover">
+            <div>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">Seller</p>
+              <p class="text-sm font-bold text-gray-700">{{ auction.seller?.firstName }} {{ auction.seller?.lastName }}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <a [routerLink]="['/auctions', auction._id]" (click)="$event.stopPropagation()"
+              class="flex-1 py-4 bg-gray-900 text-white text-center rounded-2xl font-black text-sm hover:bg-black transition-all">
+              View
+            </a>
+            @if (!isOwner(auction)) {
+            <a [routerLink]="['/auctions/bid', auction._id]" (click)="$event.stopPropagation()"
+              class="flex-1 py-4 bg-indigo-50 text-indigo-600 text-center rounded-2xl font-black text-sm hover:bg-indigo-100 transition-all border border-indigo-100">
+              Bid Again
+            </a>
+            }
+          </div>
+        </div>
       </div>
+      }
+    </div>
     }
   </div>
 </div>
