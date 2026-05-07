@@ -1,146 +1,183 @@
-<div class="place-bid-container animate-fadeIn">
-  <div class="max-w-4xl mx-auto">
-    <!-- Breadcrumbs -->
-    <nav class="flex mb-8 text-sm font-medium text-gray-500">
-      <a routerLink="/auctions" class="hover:text-indigo-600 transition-colors">Auctions</a>
-      <span class="mx-2">/</span>
-      <span class="text-gray-900">Place Bid</span>
+<div class="place-bid-wrapper min-h-screen bg-[#fcfdfe] py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Clean Breadcrumb -->
+    <nav class="flex items-center gap-2 mb-8 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+      <a routerLink="/auctions" class="hover:text-blue-600 transition-colors">Auctions</a>
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      <span class="text-gray-600">Place Bid</span>
     </nav>
 
     @if (isLoading()) {
-      <div class="bg-white rounded-3xl p-12 shadow-xl border border-gray-100 flex flex-col items-center">
-        <div class="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-gray-500 font-medium">Loading auction details...</p>
+      <div class="bg-white rounded-3xl p-16 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+        <div class="relative w-12 h-12 mb-6">
+          <div class="absolute inset-0 border-2 border-gray-100 rounded-full"></div>
+          <div class="absolute inset-0 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <p class="text-sm font-bold text-gray-900">Loading auction data...</p>
       </div>
     } @else if (error()) {
-      <div class="bg-red-50 rounded-3xl p-12 shadow-xl border border-red-100 text-center">
-        <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-          </svg>
+      <div class="bg-white rounded-3xl p-12 shadow-sm border border-red-50 text-center max-w-xl mx-auto">
+        <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Error</h2>
-        <p class="text-gray-600 mb-8">{{ error() }}</p>
-        <a routerLink="/auctions" class="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition-all">
-          Back to Auctions
+        <h2 class="text-xl font-bold text-gray-900 mb-3">Unable to Load Auction</h2>
+        <p class="text-sm text-gray-500 mb-8">{{ error() }}</p>
+        <a routerLink="/auctions" class="inline-flex items-center px-8 py-3 bg-gray-900 text-white rounded-xl font-bold text-xs uppercase tracking-wide hover:bg-blue-600 transition-all">
+          Back to Gallery
         </a>
       </div>
     } @else if (success()) {
-      <div class="bg-white rounded-3xl p-12 shadow-2xl border border-green-100 text-center animate-bounce-in">
-        <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-          <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
+      <div class="bg-white rounded-[2.5rem] p-16 shadow-xl border border-green-50 text-center max-w-xl mx-auto animate-bounce-in">
+        <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8 relative">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         </div>
-        <h2 class="text-3xl font-black text-gray-900 mb-2">Bid Placed!</h2>
-        <p class="text-gray-500 mb-8 text-lg">Your bid of <span class="font-bold text-green-600">{{ formatPrice(bidForm.value.amount || 0) }}</span> has been successfully placed.</p>
-        <p class="text-sm text-gray-400">Redirecting you back to the auction...</p>
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Bid Placed Successfully</h2>
+        <p class="text-gray-500 mb-8">Your bid of <span class="text-green-600 font-bold">{{ formatPrice(bidForm.value.amount || 0) }}</span> is now the leading offer.</p>
+        <div class="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <div class="w-1 h-1 bg-blue-500 rounded-full animate-ping"></div>
+          Returning to auction details
+        </div>
       </div>
     } @else {
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Left: Auction Summary -->
-        <div class="space-y-6">
-          <div class="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-            <div class="relative h-64">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Item Details Card -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100">
+            <div class="relative h-72">
               <img [src]="getImageUrl(auction()?.images?.[0])" [alt]="auction()?.title" class="w-full h-full object-cover">
-              <div class="absolute top-4 left-4">
-                <span class="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest text-indigo-600 shadow-lg">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <div class="absolute top-6 left-6">
+                <span class="px-3 py-1 bg-white/95 rounded-lg text-[10px] font-bold uppercase tracking-wider text-blue-600">
                   {{ auction()?.category }}
                 </span>
               </div>
+              <div class="absolute bottom-6 left-6 right-6">
+                <h1 class="text-2xl font-bold text-white tracking-tight leading-tight">{{ auction()?.title }}</h1>
+              </div>
             </div>
+            
             <div class="p-8">
-              <h1 class="text-3xl font-black text-gray-900 mb-4">{{ auction()?.title }}</h1>
-              <p class="text-gray-500 leading-relaxed line-clamp-3">{{ auction()?.description }}</p>
+              <div class="flex items-center gap-2 mb-4 text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h3 class="text-xs font-bold uppercase tracking-wider">Product Description</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                {{ auction()?.description }}
+              </p>
             </div>
           </div>
 
-          <div class="p-8 bg-gray-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-            <div class="absolute -right-4 -top-4 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl group-hover:bg-indigo-500/40 transition-all duration-700"></div>
-            
-            <div class="relative z-10">
-              <div class="flex items-center gap-2 mb-4">
-                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Ending In</p>
-              </div>
-              
-              <div class="text-5xl font-black tracking-tighter font-mono mb-8">
-                <app-countdown [endDate]="auction()?.endDate" mode="detail"></app-countdown>
-              </div>
-
-              <div class="grid grid-cols-2 gap-6 pt-6 border-t border-white/10">
-                <div>
-                  <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Current Bid</p>
-                  <p class="text-3xl font-black text-white tracking-tighter">{{ formatPrice(auction()?.currentBid || auction()?.startingPrice) }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Bids</p>
-                  <p class="text-3xl font-black text-white tracking-tighter">{{ auction()?.totalBids || 0 }}</p>
-                </div>
-              </div>
+          <!-- Trust & Features -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col items-center text-center">
+              <svg class="w-5 h-5 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              <p class="text-[9px] font-bold uppercase tracking-wider text-gray-500">Authentic</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col items-center text-center">
+              <svg class="w-5 h-5 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <p class="text-[9px] font-bold uppercase tracking-wider text-gray-500">Secure</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col items-center text-center">
+              <svg class="w-5 h-5 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+              <p class="text-[9px] font-bold uppercase tracking-wider text-gray-500">Insured</p>
             </div>
           </div>
         </div>
 
-        <!-- Right: Bidding Form -->
-        <div class="bg-white rounded-3xl p-8 shadow-2xl border border-gray-100 flex flex-col justify-between">
-          <div>
-            <h2 class="text-2xl font-black text-gray-900 mb-2">Place Your Bid</h2>
-            <p class="text-gray-500 mb-8">Enter an amount higher than the current bid to participate.</p>
+        <!-- Bidding Console -->
+        <div class="lg:col-span-5">
+          <div class="bg-white rounded-[2rem] p-8 shadow-lg border border-gray-100">
+            <div class="flex items-center justify-between mb-8">
+              <h2 class="text-lg font-bold text-gray-900 tracking-tight">Place Your Bid</h2>
+              <span class="flex items-center gap-1 text-[10px] font-bold text-red-500 uppercase tracking-widest">
+                <span class="w-1 h-1 bg-red-500 rounded-full animate-pulse"></span>
+                <app-countdown [endDate]="auction()?.endDate" mode="detail"></app-countdown>
+              </span>
+            </div>
 
-            <form [formGroup]="bidForm" (ngSubmit)="onSubmit()">
-              <div class="mb-8">
-                <label class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-widest">Your Bid Amount (PKR)</label>
-                <div class="relative group">
-                  <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-gray-400 group-focus-within:text-indigo-600 transition-colors">₨</span>
+            <!-- Price Information -->
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8 flex justify-between items-center">
+              <div>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Current Bid</p>
+                <p class="text-2xl font-bold text-gray-900">{{ formatPrice(auction()?.currentBid || auction()?.startingPrice) }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Min. Increment</p>
+                <p class="text-lg font-semibold text-gray-600">PKR 1.0</p>
+              </div>
+            </div>
+
+            <form [formGroup]="bidForm" (ngSubmit)="onSubmit()" class="space-y-6">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Bid Amount</label>
+                  @if (bidForm.value.amount) {
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
+                      +{{ formatPrice(bidForm.value.amount - (auction()?.currentBid || auction()?.startingPrice)) }} increase
+                    </span>
+                  }
+                </div>
+                
+                <div class="relative">
+                  <span class="absolute left-6 top-1/2 -translate-y-1/2 text-xl font-bold text-gray-300">₨</span>
                   <input 
                     type="number" 
                     formControlName="amount"
-                    class="w-full pl-14 pr-8 py-6 bg-gray-50 border-2 border-transparent rounded-2xl text-2xl font-black focus:bg-white focus:border-indigo-600 focus:outline-none transition-all"
-                    placeholder="Enter amount">
+                    class="w-full pl-12 pr-6 py-5 bg-gray-50 border border-gray-200 rounded-xl text-2xl font-bold focus:bg-white focus:border-blue-600 focus:outline-none transition-all"
+                    placeholder="0.00">
                 </div>
+                
                 @if (bidForm.get('amount')?.invalid && bidForm.get('amount')?.touched) {
-                  <p class="text-red-500 text-sm mt-3 font-bold flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"></path></svg>
-                    Minimum bid is {{ formatPrice((auction()?.currentBid || auction()?.startingPrice) + 1) }}
-                  </p>
+                  <div class="mt-3 text-[11px] font-semibold text-red-500 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    Min bid required: {{ formatPrice((auction()?.currentBid || auction()?.startingPrice) + 1) }}
+                  </div>
                 }
               </div>
 
-              <div class="grid grid-cols-3 gap-4 mb-8">
-                <button type="button" (click)="quickBid(100)" class="py-3 px-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl font-bold text-sm transition-all border border-transparent hover:border-indigo-200">
+              <!-- Quick Presets -->
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" (click)="quickBid(100)" class="py-3 bg-white border border-gray-200 rounded-xl font-bold text-[10px] text-gray-500 hover:border-blue-600 hover:text-blue-600 transition-all uppercase tracking-wider">
                   + 100
                 </button>
-                <button type="button" (click)="quickBid(500)" class="py-3 px-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl font-bold text-sm transition-all border border-transparent hover:border-indigo-200">
+                <button type="button" (click)="quickBid(500)" class="py-3 bg-white border border-gray-200 rounded-xl font-bold text-[10px] text-gray-500 hover:border-blue-600 hover:text-blue-600 transition-all uppercase tracking-wider">
                   + 500
                 </button>
-                <button type="button" (click)="quickBid(1000)" class="py-3 px-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl font-bold text-sm transition-all border border-transparent hover:border-indigo-200">
-                  + 1,000
+                <button type="button" (click)="quickBid(1000)" class="py-3 bg-white border border-gray-200 rounded-xl font-bold text-[10px] text-gray-500 hover:border-blue-600 hover:text-blue-600 transition-all uppercase tracking-wider">
+                  + 1.0k
                 </button>
               </div>
 
               <button 
                 type="submit" 
                 [disabled]="bidForm.invalid || isSubmitting()"
-                class="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-2xl text-xl font-black shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 transition-all flex items-center justify-center">
-                @if (isSubmitting()) {
-                  <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                  Placing Bid...
-                } @else {
-                  Confirm Bid
-                }
+                class="w-full py-4 bg-gray-900 text-white rounded-xl text-sm font-bold uppercase tracking-wider transition-all hover:bg-blue-700 disabled:bg-gray-100 disabled:text-gray-300">
+                <div class="flex items-center justify-center gap-3">
+                  @if (isSubmitting()) {
+                    <div class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    Processing...
+                  } @else {
+                    Confirm Bid
+                  }
+                </div>
               </button>
             </form>
-          </div>
 
-          <div class="mt-8 pt-8 border-t border-gray-100">
-            <div class="flex items-center text-gray-400 text-sm">
-              <svg class="w-5 h-5 mr-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-              </svg>
-              Secure Transaction. Funds are held in escrow.
+            <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-center gap-6">
+              <div class="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Encrypted
+              </div>
+              <div class="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                Protected
+              </div>
             </div>
           </div>
+          
+          <p class="text-[9px] text-center text-gray-400 font-medium mt-6 leading-relaxed">
+            All bids are binding. Your payment is held in a secure escrow until the item is delivered and verified.
+          </p>
         </div>
       </div>
     }

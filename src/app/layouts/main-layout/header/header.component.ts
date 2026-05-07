@@ -31,4 +31,14 @@ export class HeaderComponent {
   createAuction(): void {
     this.router.navigate(['/auctions/create']);
   }
+
+  getImageUrl(imagePath: string | undefined): string {
+    if (!imagePath || imagePath === 'undefined' || imagePath === 'null') {
+      const name = this.currentUser()?.firstName || 'User';
+      return `https://ui-avatars.com/api/?name=${name}&background=002f34&color=fff`;
+    }
+    if (imagePath.startsWith('http')) return imagePath;
+    const cleanPath = imagePath.replace(/^.*uploads[\\/]/, '');
+    return `http://localhost:3200/uploads/${cleanPath.replace(/\\/g, '/')}`;
+  }
 }
