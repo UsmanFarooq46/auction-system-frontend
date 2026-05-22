@@ -56,6 +56,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     // Pricing
     startingPrice: [null as number | null, [Validators.required, Validators.min(1)]],
     reservePrice: [null as number | null, [Validators.min(1)]],
+    buyNowPrice: [null as number | null, [Validators.min(1)]],
     // Timing
     duration: [null as number | null, [Validators.required]],
     startDate: ['', [Validators.required]],
@@ -85,6 +86,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
       condition: data.condition,
       startingPrice: data.startingPrice,
       reservePrice: data.reservePrice,
+      buyNowPrice: data.buyNowPrice,
       duration: data.duration,
       startDate: startIso,
       location: data.location,
@@ -100,6 +102,7 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
       this.form.get('condition')?.disable();
       this.form.get('startingPrice')?.disable();
       this.form.get('reservePrice')?.disable();
+      this.form.get('buyNowPrice')?.disable();
     }
 
     if (data.images && data.images.length > 0) {

@@ -38,6 +38,11 @@ export const routes: Routes = [
                 canActivate: [AuthGuard]
             },
             {
+                path: 'chats',
+                loadChildren: () => import('./features/chats/chats.routes').then(m => m.chatsRoutes),
+                canActivate: [AuthGuard]
+            },
+            {
                 path: 'admin',
                 loadChildren: () => import('./features/admin/admin.routes').then(m => m.adminRoutes),
                 canActivate: [AuthGuard, RoleGuard],
