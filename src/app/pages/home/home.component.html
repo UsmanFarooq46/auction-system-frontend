@@ -21,14 +21,19 @@
 <!-- Statistics Section -->
 <section class="py-16 bg-gray-50">
   <div class="container mx-auto px-4">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-      @for (stat of stats; track stat.label) {
-        <div class="text-center animate-fade-in">
-          <div class="text-4xl mb-2">{{ stat.icon }}</div>
-          <div class="text-3xl font-bold text-primary-600 mb-1">{{ stat.value }}</div>
-          <div class="text-gray-600">{{ stat.label }}</div>
+    <div class="grid grid-cols-2 gap-8 max-w-2xl mx-auto">
+      <div class="text-center animate-fade-in">
+        <div class="text-4xl mb-2">🔨</div>
+        <div class="text-3xl font-bold text-primary-600 mb-1">
+          {{ activeAuctionsCount() !== null ? (activeAuctionsCount() | number) : '—' }}
         </div>
-      }
+        <div class="text-gray-600">Active Auctions</div>
+      </div>
+      <div class="text-center animate-fade-in">
+        <div class="text-4xl mb-2">🗂️</div>
+        <div class="text-3xl font-bold text-primary-600 mb-1">{{ categories.length }}</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
     </div>
   </div>
 </section>
@@ -43,43 +48,63 @@
       </p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      @for (auction of featuredAuctions; track auction.id) {
-        <div class="auction-card group">
-          <div class="relative overflow-hidden">
-            <img [src]="auction.image" [alt]="auction.title" class="auction-card-image">
-            <div class="absolute top-4 right-4">
-              @if (auction.status === 'live') {
-                <span class="badge badge-live">Live</span>
-              } @else if (auction.status === 'ending-soon') {
-                <span class="badge badge-ending-soon">Ending Soon</span>
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="bg-gray-100 rounded-2xl h-96 animate-pulse"></div>
+        }
+      </div>
+    } @else if (featuredAuctions().length === 0) {
+      <div class="text-center py-16 bg-gray-50 rounded-3xl border border-dashed border-gray-300">
+        <h3 class="text-xl font-semibold text-gray-500">No live auctions available right now.</h3>
+        <p class="text-gray-400 mt-2">Be the first to list an item!</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (auction of featuredAuctions(); track auction._id) {
+          <div class="auction-card group cursor-pointer" [routerLink]="['/auctions', auction._id]">
+            <div class="relative overflow-hidden">
+              <img [src]="getImageUrl(auction.images?.[0])" [alt]="auction.title" class="auction-card-image">
+              <div class="absolute top-4 right-4">
+                @if (auction.status === 'live') {
+                  <span class="badge badge-live">Live</span>
+                } @else if (auction.status === 'pending') {
+                  <span class="badge badge-ending-soon">Upcoming</span>
+                }
+              </div>
+            </div>
+
+            <div class="p-4">
+              <h3 class="auction-card-title">{{ auction.title }}</h3>
+              <p class="auction-card-description">{{ auction.description }}</p>
+
+              <div class="mt-4 space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-gray-500">Current Bid</span>
+                  <span class="text-price">{{ formatPrice(auction.currentBid || auction.startingPrice) }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm text-gray-500">Time Left</span>
+                  <app-countdown [endDate]="auction.endDate" mode="detail"></app-countdown>
+                </div>
+              </div>
+
+              @if (isOwner(auction)) {
+                <button [routerLink]="['/auctions/edit', auction._id]" (click)="$event.stopPropagation()"
+                        class="w-full mt-4 btn btn-primary">
+                  Edit Auction
+                </button>
+              } @else {
+                <button (click)="onBid(auction); $event.stopPropagation()" class="w-full mt-4 btn btn-primary">
+                  Place Bid
+                </button>
               }
             </div>
           </div>
-          
-          <div class="p-4">
-            <h3 class="auction-card-title">{{ auction.title }}</h3>
-            <p class="auction-card-description">{{ auction.description }}</p>
-            
-            <div class="mt-4 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-500">Current Bid</span>
-                <span class="text-price">${{ auction.currentBid | number }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-500">Time Left</span>
-                <span class="text-timer">{{ auction.timeLeft }}</span>
-              </div>
-            </div>
-            
-            <button class="w-full mt-4 btn btn-primary">
-              Place Bid
-            </button>
-          </div>
-        </div>
-      }
-    </div>
-    
+        }
+      </div>
+    }
+
     <div class="text-center mt-12">
       <a routerLink="/auctions" class="btn btn-outline btn-lg">
         View All Auctions
@@ -99,12 +124,11 @@
     </div>
     
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-      @for (category of categories; track category.name) {
-        <a routerLink="/auctions" [queryParams]="{category: category.name}" 
+      @for (category of categories; track category.value) {
+        <a routerLink="/auctions" [queryParams]="{category: category.value}"
            class="card-interactive text-center p-6 hover:shadow-lg transition-all duration-200">
           <div class="text-4xl mb-3">{{ category.icon }}</div>
-          <h3 class="font-semibold text-gray-900 mb-1">{{ category.name }}</h3>
-          <p class="text-sm text-gray-500">{{ category.count }} items</p>
+          <h3 class="font-semibold text-gray-900">{{ category.name }}</h3>
         </a>
       }
     </div>

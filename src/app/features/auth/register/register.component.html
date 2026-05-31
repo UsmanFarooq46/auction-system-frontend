@@ -152,37 +152,6 @@
               </label>
             </div>
           </div>
-
-          <!-- Role Selection -->
-          <div class="space-y-3">
-            <label class="block text-sm font-medium text-gray-700">Account Type</label>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
-                     [class.border-indigo-500]="registerForm.get('role')?.value === 'bidder'"
-                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'bidder'">
-                <input type="radio" formControlName="role" value="bidder" class="sr-only" />
-                <div class="flex items-center">
-                  <div class="text-3xl mr-4">🛒</div>
-                  <div>
-                    <div class="text-lg font-semibold text-gray-900">Bidder</div>
-                    <div class="text-sm text-gray-500">Browse and bid on auctions</div>
-                  </div>
-                </div>
-              </label>
-              <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all duration-200 hover:shadow-md"
-                     [class.border-indigo-500]="registerForm.get('role')?.value === 'seller'"
-                     [class.bg-indigo-50]="registerForm.get('role')?.value === 'seller'">
-                <input type="radio" formControlName="role" value="seller" class="sr-only" />
-                <div class="flex items-center">
-                  <div class="text-3xl mr-4">🏪</div>
-                  <div>
-                    <div class="text-lg font-semibold text-gray-900">Merchant</div>
-                    <div class="text-sm text-gray-500">Create and manage auctions</div>
-                  </div>
-                </div>
-              </label>
-            </div>
-          </div>
         </div>
 
         <!-- Terms and Conditions -->

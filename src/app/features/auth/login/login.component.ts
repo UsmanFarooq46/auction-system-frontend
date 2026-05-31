@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthActions } from '../../../state/auth/auth.actions';
 import { selectAuthError, selectAuthLoading } from '../../../state/auth/auth.selectors';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ export class LoginComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private store = inject(Store);
+  private toast = inject(ToastService);
 
   // Signals for reactive state management
   isLoading = signal(false);
@@ -38,7 +40,13 @@ export class LoginComponent {
     });
 
     this.store.select(selectAuthLoading).subscribe((loading) => this.isLoading.set(loading));
-    this.store.select(selectAuthError).subscribe((err) => this.errorMessage.set(err));
+    this.store.select(selectAuthError).subscribe((err) => {
+      this.errorMessage.set(err);
+      // Surface backend/auth errors as a toast (only when a new error arrives)
+      if (err) {
+        this.toast.error(err);
+      }
+    });
   }
 
   /**

@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { TextFieldComponent } from '../../../shared/components/form/text-field/text-field.component';
-import { NumberFieldComponent } from '../../../shared/components/form/number-field/number-field.component';
-import { SelectBoxComponent } from '../../../shared/components/form/select-box/select-box.component';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +15,7 @@ import { SelectBoxComponent } from '../../../shared/components/form/select-box/s
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
+  private toast = inject(ToastService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
@@ -35,7 +35,7 @@ export class RegisterComponent {
       phone: ['', [Validators.required, Validators.pattern(/^[\+]?[1-9][\d]{0,15}$/)]],
       dateOfBirth: ['', [Validators.required]],
       gender: ['', [Validators.required]],
-      role: ['customer', [Validators.required]],
+      role: ['bidder', [Validators.required]],
       termsAccepted: [false, [Validators.requiredTrue]]
     });
   }
@@ -59,7 +59,7 @@ export class RegisterComponent {
         phone: this.registerForm.value.phone,
         dateOfBirth: this.registerForm.value.dateOfBirth,
         gender: this.registerForm.value.gender,
-        role: this.registerForm.value.role || 'customer'
+        role: this.registerForm.value.role || 'bidder'
       };
 
       // Call auth service to register user
@@ -92,13 +92,15 @@ export class RegisterComponent {
 
   // Show success message
   private showSuccessMessage(): void {
-    // You can implement a toast notification here
-    console.log('Registration successful! Please check your email for verification.');
+    this.toast.success('Registration successful! Please sign in to continue.');
   }
 
   // Show error message
   private showErrorMessage(error: any): void {
-    // You can implement error handling here
-    console.error('Registration failed:', error.message || 'An error occurred during registration');
+    const message =
+      error?.error?.message ||
+      error?.message ||
+      'An error occurred during registration. Please try again.';
+    this.toast.error(message);
   }
 }
