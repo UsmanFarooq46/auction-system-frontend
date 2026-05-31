@@ -10,7 +10,7 @@ export const defaultCategories = [
     { value: 'sports', label: 'Sports & Recreation' },
     { value: 'other', label: 'Other' }
 ];
-  
+
 export const conditions = [
     { value: 'new', label: 'New' },
     { value: 'like-new', label: 'Like New' },

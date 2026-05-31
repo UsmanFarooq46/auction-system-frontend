@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuctionService } from '../../../core/services/auction.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { finalize } from 'rxjs';
@@ -17,12 +17,17 @@ export class ListComponent implements OnInit {
   private auctionService = inject(AuctionService);
   private authService = inject(AuthService);
   private router = inject(Router);
-
+  private route = inject(ActivatedRoute);
+  
   auctions = signal<any[]>([]);
   isLoading = signal(true);
+  currentCategory = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.loadAuctions();
+    this.route.queryParams.subscribe(params => {
+      this.currentCategory.set(params['category'] || null);
+      this.loadAuctions();
+    });
   }
 
   isOwner(auction: any): boolean {
@@ -47,7 +52,12 @@ export class ListComponent implements OnInit {
 
   loadAuctions(): void {
     this.isLoading.set(true);
-    this.auctionService.getAuctions({})
+    const filters: any = {};
+    if (this.currentCategory()) {
+      filters.category = this.currentCategory();
+    }
+
+    this.auctionService.getAuctions(filters)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
@@ -59,7 +69,9 @@ export class ListComponent implements OnInit {
   }
 
   getImageUrl(imagePath: string | undefined): string {
-    if (!imagePath) return 'https://via.placeholder.com/400x300?text=No+Image';
+    if (!imagePath || imagePath === 'undefined' || imagePath === 'null') {
+      return 'https://ui-avatars.com/api/?name=User&background=002f34&color=fff';
+    }
     if (imagePath.startsWith('http')) return imagePath;
 
     // Remove anything before and including 'uploads/'

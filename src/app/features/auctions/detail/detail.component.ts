@@ -2,15 +2,24 @@ import { Component, inject, OnInit, OnDestroy, signal, computed, PLATFORM_ID } f
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { AuctionService } from '../../../core/services/auction.service';
+import { UiService } from '../../../core/services/ui.service';
 import { Store } from '@ngrx/store';
 import { selectAuthUser } from '../../../state/auth/auth.selectors';
 import { finalize, Subscription } from 'rxjs';
 import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
+import { PkrCurrencyPipe } from '../../../shared/pipes/pkr-currency.pipe';
 
 @Component({
   selector: 'app-auction-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, CountdownComponent],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    CountdownComponent,
+    ImageUrlPipe,
+    PkrCurrencyPipe
+  ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
 })
@@ -18,6 +27,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private auctionService = inject(AuctionService);
+  public uiService = inject(UiService);
   private store = inject(Store);
   private platformId = inject(PLATFORM_ID);
 
@@ -26,7 +36,8 @@ export class DetailComponent implements OnInit, OnDestroy {
   error = signal<string | null>(null);
   currentUser = signal<any>(null);
   selectedImageIndex = signal(0);
-  
+  buyNowLoading = signal(false);
+
   private authSubscription?: Subscription;
 
   isOwner = computed(() => {
@@ -70,27 +81,59 @@ export class DetailComponent implements OnInit, OnDestroy {
       });
   }
 
-
-  getImageUrl(imagePath: string | undefined): string {
-    if (!imagePath) return 'https://via.placeholder.com/800x600?text=No+Image';
-    if (imagePath.startsWith('http')) return imagePath;
-    const cleanPath = imagePath.replace(/^.*uploads[\\/]/, '');
-    return `http://localhost:3200/uploads/${cleanPath.replace(/\\/g, '/')}`;
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-PK', {
-      style: 'currency',
-      currency: 'PKR',
-      minimumFractionDigits: 0
-    }).format(price);
-  }
-
   onBid(): void {
     if (!this.currentUser()) {
       this.router.navigate(['/auth/login'], { queryParams: { returnUrl: `/auctions/bid/${this.auction()._id}` } });
     } else {
       this.router.navigate(['/auctions/bid', this.auction()._id]);
     }
+  }
+
+  onBuyNow(): void {
+    if (!this.currentUser()) {
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: `/auctions/${this.auction()._id}` } });
+      return;
+    }
+
+    const price = this.auction().buyNowPrice;
+    if (!price) return;
+
+    if (confirm(`Are you sure you want to purchase this item immediately for ${this.uiService.formatPrice(price)}?`)) {
+      this.buyNowLoading.set(true);
+      this.auctionService.placeBid(this.auction()._id, price)
+        .pipe(finalize(() => this.buyNowLoading.set(false)))
+        .subscribe({
+          next: () => {
+            alert('Congratulations! You have successfully purchased this item.');
+            this.loadAuction(this.auction()._id);
+          },
+          error: (err) => {
+            console.error('Error in Buy It Now:', err);
+            alert(err.error?.message || 'Failed to complete immediate purchase.');
+          }
+        });
+    }
+  }
+
+  onChat(): void {
+    if (!this.currentUser()) {
+      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: `/auctions/${this.auction()._id}` } });
+      return;
+    }
+
+    const seller = this.auction().seller;
+    const sellerId = seller?._id || seller?.id;
+    if (!sellerId) {
+      alert('Seller information is unavailable for this auction.');
+      return;
+    }
+
+    const sellerName = `${seller?.firstName || ''} ${seller?.lastName || ''}`.trim() || 'Seller';
+    this.router.navigate(['/chats', sellerId], {
+      queryParams: {
+        auctionId: this.auction()._id,
+        sellerName
+      }
+    });
   }
 }

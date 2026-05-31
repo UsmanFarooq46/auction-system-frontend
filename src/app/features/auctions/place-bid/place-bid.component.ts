@@ -116,7 +116,9 @@ export class PlaceBidComponent implements OnInit {
   }
 
   getImageUrl(imagePath: string | undefined): string {
-    if (!imagePath) return 'https://via.placeholder.com/400x300?text=No+Image';
+    if (!imagePath || imagePath === 'undefined' || imagePath === 'null') {
+      return 'https://ui-avatars.com/api/?name=User&background=002f34&color=fff';
+    }
     if (imagePath.startsWith('http')) return imagePath;
     const cleanPath = imagePath.replace(/^.*uploads[\\/]/, '');
     return `http://localhost:3200/uploads/${cleanPath.replace(/\\/g, '/')}`;
