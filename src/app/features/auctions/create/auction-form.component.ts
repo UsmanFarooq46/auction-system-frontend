@@ -56,7 +56,6 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     // Pricing
     startingPrice: [null as number | null, [Validators.required, Validators.min(1)]],
     reservePrice: [null as number | null, [Validators.min(1)]],
-    buyNowPrice: [null as number | null, [Validators.min(1)]],
     // Timing
     duration: [null as number | null, [Validators.required]],
     startDate: ['', [Validators.required]],
@@ -86,7 +85,6 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
       condition: data.condition,
       startingPrice: data.startingPrice,
       reservePrice: data.reservePrice,
-      buyNowPrice: data.buyNowPrice,
       duration: data.duration,
       startDate: startIso,
       location: data.location,
@@ -102,7 +100,6 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
       this.form.get('condition')?.disable();
       this.form.get('startingPrice')?.disable();
       this.form.get('reservePrice')?.disable();
-      this.form.get('buyNowPrice')?.disable();
     }
 
     if (data.images && data.images.length > 0) {
@@ -148,13 +145,27 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
     this.previewImages.forEach(url => URL.revokeObjectURL(url));
   }
 
+  private fieldLabels: Record<string, string> = {
+    title: 'Title',
+    description: 'Description',
+    category: 'Category',
+    condition: 'Condition',
+    startingPrice: 'Starting Price',
+    reservePrice: 'Reserve Price',
+    duration: 'Duration',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    location: 'Location'
+  };
+
   getFieldError(fieldName: string): string {
     const field = this.form.get(fieldName);
+    const label = this.fieldLabels[fieldName] || fieldName;
     if (field?.errors && field.touched) {
-      if (field.errors['required']) return `${fieldName} is required`;
-      if (field.errors['minlength']) return `${fieldName} is too short`;
-      if (field.errors['maxlength']) return `${fieldName} is too long`;
-      if (field.errors['min']) return `${fieldName} must be greater than 0`;
+      if (field.errors['required']) return `${label} is required`;
+      if (field.errors['minlength']) return `${label} must be at least ${field.errors['minlength'].requiredLength} characters`;
+      if (field.errors['maxlength']) return `${label} must be at most ${field.errors['maxlength'].requiredLength} characters`;
+      if (field.errors['min']) return `${label} must be greater than 0`;
     }
     return '';
   }
@@ -221,11 +232,38 @@ export class AuctionFormComponent implements OnInit, OnDestroy {
         existingImages: this.existingImages
       };
       this.formSubmitted.emit(formData);
-    } else {
-      if (totalImages === 0) {
-        alert('Please select at least one image');
-      }
+      return;
     }
+
+    // Build a clear message explaining what still needs fixing
+    const problems: string[] = [];
+    Object.keys(this.form.controls).forEach((name) => {
+      const control = this.form.get(name);
+      if (control && control.enabled && control.invalid) {
+        const label = this.fieldLabels[name] || name;
+        if (control.errors?.['required']) {
+          problems.push(`${label} is required`);
+        } else if (control.errors?.['minlength']) {
+          problems.push(`${label} must be at least ${control.errors['minlength'].requiredLength} characters`);
+        } else if (control.errors?.['maxlength']) {
+          problems.push(`${label} must be at most ${control.errors['maxlength'].requiredLength} characters`);
+        } else if (control.errors?.['min']) {
+          problems.push(`${label} must be greater than 0`);
+        } else {
+          problems.push(`${label} is invalid`);
+        }
+      }
+    });
+
+    if (totalImages === 0) {
+      problems.push('At least one image is required');
+    }
+
+    alert('Please fix the following before submitting:\n\n• ' + problems.join('\n• '));
+
+    // Scroll to the first invalid field so the user can see it
+    const firstInvalid = document.querySelector('.border-red-500, [aria-invalid="true"]');
+    firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
 

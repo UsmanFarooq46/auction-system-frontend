@@ -1,3 +1,5 @@
+@reference 'tailwindcss';
+
 /* Register Component Styles */
 
 /* Form Input Error States */
@@ -62,7 +64,8 @@ input[type="radio"]:checked + div {
 
 /* Form Validation Messages */
 .validation-error {
-  @apply text-red-500 text-sm mt-1 animate-fade-in;
+  @apply text-red-500 text-sm mt-1;
+  animation: fade-in 0.3s ease-out;
 }
 
 @keyframes fade-in {

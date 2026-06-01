@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
+    @reference 'tailwindcss';
     .loader-container {
       @apply flex flex-col items-center justify-center p-8;
     }

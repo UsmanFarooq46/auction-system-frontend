@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
     </button>
   `,
   styles: [`
+    @reference 'tailwindcss';
     .btn {
       @apply px-4 py-2 rounded font-medium transition-colors duration-200;
     }

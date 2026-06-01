@@ -49,8 +49,13 @@ import { ChatSocketService } from '../../../core/services/chat-socket.service';
 
           <div class="md:col-span-2 flex flex-col min-h-0">
             @if (!selectedConversationId()) {
-              <div class="h-full flex items-center justify-center text-sm text-gray-500 p-6">
-                Select a chat from the left panel
+              <div class="h-full flex flex-col items-center justify-center text-sm text-gray-500 p-6 text-center">
+                @if (chatError()) {
+                  <p class="text-red-600 font-semibold mb-1">Could not open this chat</p>
+                  <p class="text-gray-500">{{ chatError() }}</p>
+                } @else {
+                  Select a chat from the left panel
+                }
               </div>
             } @else {
               <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
@@ -120,6 +125,7 @@ export class InboxComponent implements OnDestroy {
   isSending = signal(false);
   selectedConversationId = signal('');
   selectedConversationName = signal('Conversation');
+  chatError = signal('');
   draftMessage = '';
 
   currentUserId = computed(() => {
@@ -188,6 +194,7 @@ export class InboxComponent implements OnDestroy {
   }
 
   private createOrOpenBySeller(sellerId: string, auctionId: string | null): void {
+    this.chatError.set('');
     this.subs.add(
       this.chatApi.createConversation(sellerId, auctionId).subscribe({
         next: (res) => {
@@ -199,7 +206,9 @@ export class InboxComponent implements OnDestroy {
           this.selectConversationById(conv._id);
           this.router.navigate(['/chats/conversation', conv._id], { replaceUrl: true });
         },
-        error: () => {},
+        error: (err) => {
+          this.chatError.set(err?.message || 'Unable to start this conversation. Please try again.');
+        },
       })
     );
   }
