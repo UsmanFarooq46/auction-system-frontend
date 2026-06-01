@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
+    @reference 'tailwindcss';
     .admin-auctions-container {
       @apply max-w-6xl mx-auto px-4 py-8;
     }

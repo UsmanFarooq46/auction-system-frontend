@@ -36,7 +36,6 @@ export class DetailComponent implements OnInit, OnDestroy {
   error = signal<string | null>(null);
   currentUser = signal<any>(null);
   selectedImageIndex = signal(0);
-  buyNowLoading = signal(false);
 
   private authSubscription?: Subscription;
 
@@ -86,32 +85,6 @@ export class DetailComponent implements OnInit, OnDestroy {
       this.router.navigate(['/auth/login'], { queryParams: { returnUrl: `/auctions/bid/${this.auction()._id}` } });
     } else {
       this.router.navigate(['/auctions/bid', this.auction()._id]);
-    }
-  }
-
-  onBuyNow(): void {
-    if (!this.currentUser()) {
-      this.router.navigate(['/auth/login'], { queryParams: { returnUrl: `/auctions/${this.auction()._id}` } });
-      return;
-    }
-
-    const price = this.auction().buyNowPrice;
-    if (!price) return;
-
-    if (confirm(`Are you sure you want to purchase this item immediately for ${this.uiService.formatPrice(price)}?`)) {
-      this.buyNowLoading.set(true);
-      this.auctionService.placeBid(this.auction()._id, price)
-        .pipe(finalize(() => this.buyNowLoading.set(false)))
-        .subscribe({
-          next: () => {
-            alert('Congratulations! You have successfully purchased this item.');
-            this.loadAuction(this.auction()._id);
-          },
-          error: (err) => {
-            console.error('Error in Buy It Now:', err);
-            alert(err.error?.message || 'Failed to complete immediate purchase.');
-          }
-        });
     }
   }
 

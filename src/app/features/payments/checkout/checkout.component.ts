@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
     </div>
   `,
   styles: [`
+    @reference 'tailwindcss';
     .checkout-container {
       @apply max-w-4xl mx-auto px-4 py-8;
     }
